@@ -88,7 +88,7 @@ export default class ButtonSubmit extends Component {
 							{this.state.isLoading ?
 								<Image source={spinner} style={styles.image} />
 								:
-								<Text style={styles.text}>LOGIN</Text>
+								<Text style={styles.text}>Login</Text>
 							}
 					</TouchableOpacity>
 					<Animated.View style={[ styles.circle, {transform: [{scale: changeScale}]} ]} />
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 	button: {
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#f5f924',
+		backgroundColor: '#fbff8b',
 		height: MARGIN,
 		borderRadius: 20,
 		zIndex: 100,
@@ -118,14 +118,14 @@ const styles = StyleSheet.create({
 		width: MARGIN,
 		marginTop: -MARGIN,
 		borderWidth: 1,
-		borderColor: '#f5f924',
+		borderColor: '#ffffff',
 		borderRadius: 100,
 		alignSelf: 'center',
 		zIndex: 99,
-		backgroundColor: '#f5f924',
+		backgroundColor: '#ffffff',
 	},
 	text: {
-		color: 'white',
+		color: 'black',
 		backgroundColor: 'transparent',
 	},
 	image: {

@@ -28,13 +28,15 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	image: {
-		width: 80,
-		height: 80,
+		width: 150,
+		height: 150,
 	},
 	text: {
 		color: 'white',
 		fontWeight: 'bold',
 		backgroundColor: 'transparent',
 		marginTop: 20,
+		fontSize: 28,
+		fontFamily: 'HelveticaNeue-Bold',
 	}
 });

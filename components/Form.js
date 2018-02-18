@@ -38,7 +38,7 @@ export default class Form extends Component {
 			<KeyboardAvoidingView behavior='padding'
 				style={styles.container}>
 				<UserInput source={usernameImg}
-					placeholder='Username'
+					placeholder='Email'
 					autoCapitalize={'none'}
 					returnKeyType={'done'}
 					autoCorrect={false} />

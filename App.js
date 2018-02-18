@@ -12,7 +12,7 @@ import LoginScreen from './screens/LoginScreen';
 class App extends Component {
 
     static navigationOptions = {
-        title: 'iTutorU Home'
+        title: 'Home'
     }
 
     // componentWillMount() {
