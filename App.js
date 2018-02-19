@@ -29,6 +29,7 @@ class App extends Component {
 
 
     render() {
+        console.disableYellowBox = true;
         return (
             // <Card>
             //   <Text>Hi!</Text>
@@ -120,11 +121,15 @@ const CalStack = StackNavigator({
     Cal: { screen: CalendarScreen },
 });
 
+const LearningStack = StackNavigator({
+    LP: { screen: LearningPlan }
+});
+
 const Tabs = TabNavigator(
     {
         // Auth: { screen: LoginScreen },
         Home: { screen: HomeStack },
-        ['Learning Plan']: { screen: LearningPlan },
+        ['Learning Plan']: { screen: LearningStack },
         Calendar: { screen: CalStack },
         Settings: { screen: SettingsScreen },
 

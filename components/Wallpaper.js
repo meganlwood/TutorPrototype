@@ -9,7 +9,7 @@ import {
     ImageBackground
 } from 'react-native';
 
-import bgSrc from '../../TutorPrototype/images/wallpaper.png';
+import bgSrc from '../images/wallpaper.png';
 
 export default class Wallpaper extends Component {
 	render() {

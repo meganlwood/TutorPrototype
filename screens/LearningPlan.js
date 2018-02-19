@@ -11,6 +11,7 @@ import {
     Text,
     View, FlatList, TouchableOpacity
 } from 'react-native';
+import { Card, Header, Button } from 'react-native-elements';
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -24,16 +25,33 @@ type Props = {};
 const DATA = {
     items: [
         {
-            key: '1',
-            title: 'Learn math'
+            title: "Coding",
+            list: [
+                {
+                    item: "Work on strings",
+                    complete: true,
+                },
+                {
+                    item: "Work on data types",
+                    complete: false,
+                }
+
+            ],
+            complete: false
         },
         {
-            key: '2',
-            title: 'Learn reading'
-        },
-        {
-            key: '3',
-            title: 'Learn math: fractions and long division'
+            title: "Math",
+            list: [
+                {
+                    item: "Practice basic algebra",
+                    complete: true,
+                },
+                {
+                    item: "Learn about variables",
+                    complete: false,
+                }
+            ],
+            complete: false
         }
     ]
 };
@@ -43,103 +61,129 @@ const DATA = {
 class LearningPlanItem extends Component {
 
     state = {
-        toggle: false
+        editing: false
     }
 
+    textStyle(item) {
+        if (item.complete == true) {
+            return {
+                textDecorationLine: 'line-through'
+            }
+        }
+    }
+
+    renderCard() {
+        if (this.state.editing === true) {
+            return(
+                <Card title={this.props.lpitem.item.title}>
+                    {this.props.lpitem.item.list.map((i, index) => {
+                        return (
+                            <TouchableOpacity onPress={() => this.props.onItemMarkComplete(index)}>
+                                <View style={{ padding: 10, borderWidth: 1, borderRadius: 5, borderColor: 'gray', marginBottom: 2 }}>
+                                    <Text style={this.textStyle(i)}>{"- " + i.item}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        );
+
+                    })}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
+                        <Button title={"Save Plan"} buttonStyle={styles.buttonStyle} onPress={() => this.setState({editing: false})} />
+                        <Button title={"Mark Complete"} buttonStyle={styles.buttonStyle} onPress={() => this.props.onCardMarkComplete()}/>
+                    </View>
+
+                </Card>
+            );
+        }
+
+        if (this.props.lpitem.item.complete === false) {
+            return(
+                <Card title={this.props.lpitem.item.title}>
+                    {this.props.lpitem.item.list.map((i) => {
+                        return <Text style={this.textStyle(i)} >{"- " + i.item}</Text>
+                    })}
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
+                        <Button title={"Edit Plan"} buttonStyle={styles.buttonStyle} onPress={() => this.setState({editing: true})}/>
+                        <Button title={"Mark Complete"} buttonStyle={styles.buttonStyle} onPress={() => this.props.onCardMarkComplete()}/>
+                    </View>
+                </Card>
+            );
+        }
+        else {
+            return(
+                <Card title={this.props.lpitem.item.title} containerStyle={{ backgroundColor: 'lightgray'}}>
+                    {this.props.lpitem.item.list.map((i) => {
+                        return <Text style={this.textStyle(i)}>{"- " + i.item}</Text>
+                    })}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
+                        {/*<Button title={"Complete"} buttonStyle={styles.buttonStyle} onPress={() => this.props.onCardMarkComplete()} />*/}
+
+                    </View>
+                </Card>
+            );
+        }
+    }
 
     render() {
+        console.log("ITEM: " + this.props.lpitem);
         return(
-            <TouchableOpacity style={[this.props.style, this.state.toggle && styles.learningPlanViewOff]} onPress={() => this.setState({ toggle: !this.state.toggle })}>
-                <Text style={[this.props.textStyle, this.state.toggle && this.props.textStyleOff]}>{('\u2022 ' + this.props.children)}</Text>
-            </TouchableOpacity>
+            this.renderCard()
         );
     }
+
 }
 
-const LearningPlanView = (props) => {
 
-    return (
-        <View style={props.viewStyle}>
-            <Text style={props.titleStyle}>Learning Plan</Text>
-            <FlatList
-                data={DATA.items}
-                renderItem={({item}) => <LearningPlanItem style={styles.learningPlanItem} textStyle={styles.learningPlanItemText} textStyleOff={styles.learningPlanItemTextOff}>{item.title}</LearningPlanItem>}
-            />
-        </View>
+class LearningPlan extends Component<Props> {
+
+    static navigationOptions = {
+        title: 'Learning Plan'
+    }
+
+    state = {
+        data: DATA,
+    }
+
+    onCardMarkComplete(index) {
+        console.log(index + "!!!!");
+        this.state.data.items[index].complete = true;
+        this.setState(this.state);
+    }
+
+    onItemMarkComplete(cardIndex, itemIndex) {
+        this.state.data.items[cardIndex].list[itemIndex].complete = !this.state.data.items[cardIndex].list[itemIndex].complete;
+        this.setState(this.state);
+    }
 
 
-    );
-};
 
-export default class LearningPlan extends Component<Props> {
     render() {
+        console.log("Rendering: " + this.state.data.items);
         return (
-            <LearningPlanView
-                viewStyle={styles.learningPlan}
-                titleStyle={styles.learningPlanTitle}
-            />
+            <View>
+                <FlatList
+                    data={this.state.data.items}
+                    renderItem={(planitem) =>
+                        <LearningPlanItem
+                            lpitem={planitem}
+                            onCardMarkComplete={() => this.onCardMarkComplete(planitem.index)}
+                            onItemMarkComplete={(itemIndex) => this.onItemMarkComplete(planitem.index, itemIndex)}
+                        />}
+                    extraData={this.state}
+                />
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ff1cb3',
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
-    },
-
-    learningPlan: {
-        backgroundColor: '#0093ff',
-        height: '100%',
-
-    },
-
-    learningPlanTitle: {
-        textAlign: 'center',
-        marginTop: 30,
-        fontSize: 40,
-        color: 'white',
-    },
-
-    learningPlanItem: {
+    buttonStyle: {
         marginTop: 20,
-        padding: 15,
-        borderWidth: 2,
-        borderColor: 'white',
-        backgroundColor: '#5fbbff',
-        borderRadius: 10,
-        marginLeft: 10,
-        marginRight: 10,
+        backgroundColor: '#0093ff',
+        // borderRadius: 30,
+        width: 150,
+        borderRadius: 10
     },
-
-    learningPlanItemText: {
-        color: 'white',
-        fontSize: 20,
-        fontFamily: 'Arial',
-        textDecorationLine: 'none'
-    },
-
-    learningPlanItemTextOff: {
-        color: 'white',
-        fontFamily: 'Arial',
-        textDecorationLine:'line-through',
-        // lineHeight: 25,
-    },
-
-    learningPlanViewOff: {
-        backgroundColor: '#8ba3b4',
-        // paddingBottom: 6,
-    }
 });
+
+export default LearningPlan;
