@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Dimensions from 'Dimensions';
+import firebase from 'firebase';
+
 import {
 	StyleSheet,
 	TouchableOpacity,
@@ -20,6 +22,21 @@ const DEVICE_HEIGHT = Dimensions.get('window').height;
 const MARGIN = 40;
 
 export default class ButtonSubmit extends Component {
+
+	componentDidMount() {
+        // Initialize Firebase
+        const config = {
+            apiKey: "AIzaSyBsjlF4FNxju6ise_-PRyyD2ZhPVwyoev4",
+            authDomain: "itutoru-ef7e2.firebaseapp.com",
+            databaseURL: "https://itutoru-ef7e2.firebaseio.com",
+            projectId: "itutoru-ef7e2",
+            storageBucket: "itutoru-ef7e2.appspot.com",
+            messagingSenderId: "115499384435"
+        };
+
+        firebase.initializeApp(config);
+	}
+
 	constructor() {
 		super();
 
@@ -33,7 +50,28 @@ export default class ButtonSubmit extends Component {
 	}
 
 	_onPress() {
+		//firebase code
+		const { email, password } = this.props;
+
 		if (this.state.isLoading) return;
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(() => {
+            	console.log("logged in without error")
+                var user = firebase.auth().currentUser.uid;
+            	console.log(user);
+            })
+
+            .catch(() => {
+            				firebase.auth().createUserWithEmailAndPassword(email, password);
+            				console.log("created user");
+                			var userId = firebase.auth().currentUser.uid;
+                			firebase.database().ref('users/' + userId).set({
+                    			email: email,
+                			});
+            });
+
+
 
 		this.setState({ isLoading: true });
 		Animated.timing(

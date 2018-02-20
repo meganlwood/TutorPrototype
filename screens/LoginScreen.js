@@ -8,15 +8,29 @@ import SignupSection from './../components/SignupSection';
 
 export default class LoginScreen extends Component {
 
-
+    state = {
+        email: '',
+        password: '',
+    }
 
     render() {
         return (
             <Wallpaper>
                 <Logo />
-                <Form />
+                <Form
+                    onChangeEmail={(text) => {
+                        //console.log("Changed state!!" + text);
+                        this.setState({ email: text });
+
+                    }}
+                    onChangePassword={(text) => this.setState({ password: text })}
+                />
                 <SignupSection/>
-                <ButtonSubmit onPress={() => this.props.navigation.navigate('After')}/>
+                <ButtonSubmit
+                    onPress={() => this.props.navigation.navigate('After')}
+                    email={this.state.email}
+                    password={this.state.password}
+                />
             </Wallpaper>
         );
     }

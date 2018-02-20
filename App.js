@@ -15,6 +15,8 @@ class App extends Component {
         title: 'Home'
     }
 
+
+
     // componentWillMount() {
     //   var config = {
     //     apiKey: "AIzaSyAV215r3uUiVrypPD15V_fe9DFjgBhILO8",

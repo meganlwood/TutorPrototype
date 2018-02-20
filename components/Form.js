@@ -41,13 +41,18 @@ export default class Form extends Component {
 					placeholder='Email'
 					autoCapitalize={'none'}
 					returnKeyType={'done'}
-					autoCorrect={false} />
+					autoCorrect={false}
+						   value={this.props.email}
+                           onChange={(text) => this.props.onChangeEmail(text)}/>
 				<UserInput source={passwordImg}
 					secureTextEntry={this.state.showPass}
 					placeholder='Password'
 					returnKeyType={'done'}
 					autoCapitalize={'none'}
-					autoCorrect={false} />
+					autoCorrect={false}
+                           value={this.props.password}
+                           onChange={(text) => this.props.onChangePassword(text)}
+					/>
 					<TouchableOpacity
 						activeOpacity={0.7}
 						style={styles.btnEye}
