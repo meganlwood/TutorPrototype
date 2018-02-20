@@ -8,7 +8,7 @@ import {
 	Image,
 } from 'react-native';
 
-import logoImg from '../../TutorPrototype/images/logo2.png';
+import logoImg from '../images/logo2.png';
 
 export default class Logo extends Component {
 	render() {
