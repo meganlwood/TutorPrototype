@@ -7,7 +7,9 @@ import SettingsScreen from './screens/SettingsScreen';
 import LearningPlan from './screens/LearningPlan';
 import CalendarScreen from './screens/CalendarScreen';
 import Messaging from './screens/Messaging';
-import LoginScreen from './screens/LoginScreen';
+// import LoginScreen from './screens/LoginScreenOld';
+import LoginScreen from './screens/LoginScreen'
+import CreateAccountTutor from "./screens/CreateAccountTutor";
 
 class App extends Component {
 
@@ -127,6 +129,11 @@ const LearningStack = StackNavigator({
     LP: { screen: LearningPlan }
 });
 
+// const AuthStack = StackNavigator({
+//     Login: { screen: LoginScreen },
+//     CreateAccount: { screen: CreateAccountTutor }
+// });
+
 const Tabs = TabNavigator(
     {
         // Auth: { screen: LoginScreen },
@@ -166,5 +173,6 @@ const Tabs = TabNavigator(
 
 export default StackNavigator({
     Auth: { screen: LoginScreen },
+    CreateAccount: { screen: CreateAccountTutor },
     After: { screen: Tabs }
 }, { headerMode: 'none' });

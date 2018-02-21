@@ -6,14 +6,22 @@ import {
 	StyleSheet,
 	View,
 	Text,
+	Button,
+	TouchableOpacity
 } from 'react-native';
 
+
 export default class SignupSection extends Component {
+
+
+
 	render() {
-		return (
+        console.log(this.props);
+
+        return (
 			<View style={styles.container}>
-				<Text style={styles.text}>Create Account</Text>
-				<Text style={styles.text}>Forgot Password?</Text>
+				<TouchableOpacity onPress={() => console.log("Pressed")}><Text>HELLO</Text></TouchableOpacity>
+				<Button style={styles.text} title={"Forgot Password?"} onPress={() => console.log("Forgot possword")}/>
 			</View>
 		);
 	}
@@ -32,6 +40,6 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		color: 'white',
-		backgroundColor: 'transparent',
+		// backgroundColor: 'transparent',
 	},
 });

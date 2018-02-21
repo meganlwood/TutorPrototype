@@ -55,21 +55,21 @@ export default class ButtonSubmit extends Component {
 
 		if (this.state.isLoading) return;
 
-        firebase.auth().signInWithEmailAndPassword(email, password)
-            .then(() => {
-            	console.log("logged in without error")
-                var user = firebase.auth().currentUser.uid;
-            	console.log(user);
-            })
-
-            .catch(() => {
-            				firebase.auth().createUserWithEmailAndPassword(email, password);
-            				console.log("created user");
-                			var userId = firebase.auth().currentUser.uid;
-                			firebase.database().ref('users/' + userId).set({
-                    			email: email,
-                			});
-            });
+        // firebase.auth().signInWithEmailAndPassword(email, password)
+        //     .then(() => {
+        //     	console.log("logged in without error")
+        //         var user = firebase.auth().currentUser.uid;
+        //     	console.log(user);
+        //     })
+        //
+        //     .catch(() => {
+        //     				firebase.auth().createUserWithEmailAndPassword(email, password);
+        //     				console.log("created user");
+        //         			var userId = firebase.auth().currentUser.uid;
+        //         			firebase.database().ref('users/' + userId).set({
+        //             			email: email,
+        //         			});
+        //     });
 
 
 
