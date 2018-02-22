@@ -15,18 +15,6 @@ class LoginScreen extends Component {
         }
     }
 
-    componentDidMount() {
-        const config = {
-            apiKey: "AIzaSyBsjlF4FNxju6ise_-PRyyD2ZhPVwyoev4",
-            authDomain: "itutoru-ef7e2.firebaseapp.com",
-            databaseURL: "https://itutoru-ef7e2.firebaseio.com",
-            projectId: "itutoru-ef7e2",
-            storageBucket: "itutoru-ef7e2.appspot.com",
-            messagingSenderId: "115499384435"
-        };
-
-        firebase.initializeApp(config);
-    }
 
 
     onChangeEmail(text) {
@@ -43,32 +31,8 @@ class LoginScreen extends Component {
 
     onPressLogin() {
 
-        if (this.state.email == '' || this.state.errors.email != '') {
-            return;
-        }
-        if (this.state.password == '' || this.state.errors.password != '') {
-            return;
-        }
-
-        const { email, password } = this.state;
-
-        firebase.auth().signInWithEmailAndPassword(email, password)
-            .then(() => {
-            	console.log("logged in without error")
-                var user = firebase.auth().currentUser.uid;
-            	console.log(user);
-            })
-
-            .catch(() => {
-                firebase.auth().createUserWithEmailAndPassword(email, password);
-                console.log("created user");
-                var userId = firebase.auth().currentUser.uid;
-                firebase.database().ref('users/' + userId).set({
-                    email: email,
-                });
-            });
-        console.log("Logged in with: " + this.state.email + " and " + this.state.password);
-        this.props.navigation.navigate('After');
+        //call firebase
+        this.props.navigation.navigate('SignedIn');
     }
 
     render() {
@@ -106,7 +70,7 @@ class LoginScreen extends Component {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                     <RNButton
                         title={"Create Account"}
-                        onPress={() => console.log("Create Account")}
+                        onPress={() => this.props.navigation.navigate('CreateAccount')}
                     />
                     <RNButton
                         title={"Forgot Password?"}

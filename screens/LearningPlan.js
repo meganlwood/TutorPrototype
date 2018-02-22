@@ -21,13 +21,6 @@ import { Card, Header, Button } from 'react-native-elements';
 import FlatListWithEnd from 'react-native-flatlist-with-end'
 
 
-const instructions = Platform.select({
-    ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-    android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
 type Props = {};
 
 const DATA = {
@@ -96,17 +89,10 @@ class LearningPlanItem extends Component {
                                     <Button
                                         title={"Del"}
                                         buttonStyle={
-                                            // {
-                                            //     backgroundColor: 'red',
-                                            //     borderRadius: 10,
-                                            //     width: 55,
-                                            //     height: 20
-                                            // }
                                             [styles.littleButtonStyle, {
                                                 backgroundColor: 'red',
                                                 marginRight: 5
                                             }]
-
                                         }
                                         onPress={() => this.props.onRemoveTask(index)}
                                     />
@@ -193,10 +179,6 @@ class LearningPlanItem extends Component {
 
 class LearningPlan extends Component<Props> {
 
-    static navigationOptions = {
-        title: 'Learning Plan',
-        // headerRight: <RNButton title={"Add"} onPress={ () => this.addCard() } />
-    }
 
     state = {
         data: DATA,
@@ -256,20 +238,12 @@ class LearningPlan extends Component<Props> {
                         return(
                             <LearningPlanItem
                                 lpitem={item}
-                                // onCardMarkComplete={() => {
-                                //     console.log("INDEX!!!!: " + item.index);
-                                //     this.onCardMarkComplete(item.index)
-                                // }}
                                 onCardMarkComplete={() => {
                                     this.onCardMarkComplete(item.item.index);
                                 }}
-                                // onItemMarkComplete={(itemIndex) => this.onItemMarkComplete(item.index, itemIndex)}
                                 onItemMarkComplete={(itemIndex) => this.onItemMarkComplete(item.item.index, itemIndex)}
-                                // onAddTask={(task) => this.onAddTask(item.index, task)}
                                 onAddTask={(task) => this.onAddTask(item.item.index, task)}
-                                // onRemoveTask={(index) => this.onRemoveTask(item.index, index)}
                                 onRemoveTask={(index) => this.onRemoveTask(item.item.index, index)}
-                                // index={index}
                                 edit={
                                     this.state.currentlyEditing === item.item.index ? true : false
                                 }

@@ -3,9 +3,9 @@ import { GiftedChat, Actions, CustomActions } from 'react-native-gifted-chat'; /
 import ImagePicker from 'react-native-image-picker'; // 0.26.7
 
 class Messaging extends Component {
-    static navigationOptions = {
-        title: 'Casey',
-    };
+    // static navigationOptions = {
+    //     title: 'Casey',
+    // };
 
     state = {
         messages: [],
