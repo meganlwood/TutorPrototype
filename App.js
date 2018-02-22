@@ -11,13 +11,14 @@ import Messaging from './screens/Messaging';
 import LoginScreen from './screens/LoginScreen'
 import CreateAccountTutor from "./screens/CreateAccountTutor";
 import Router, { createRootNavigator } from './Router';
+import { initialize } from "./FirebaseManager";
 
 class App extends Component {
 
 
     render() {
         console.disableYellowBox = true;
-
+        initialize();
 
         var signedIn = false;
         const Router = createRootNavigator(signedIn);

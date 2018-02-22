@@ -19,6 +19,73 @@ export function initialize() {
     firebase.initializeApp(config);
 }
 
+export function createStudent(email, password) {
+    console.log("creating student");
+    return new Promise((resolve, reject) => {
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(() => {
+                resolve(true);
+                console.log("successfully created student");
+            })
+            .catch((error) => {
+                console.log("there was an error");
+                resolve(error.message);
+            });
+
+        var userId = firebase.auth().currentUser.uid;
+        firebase.database().ref('students/' + userId).set({
+            email: email,
+        });
+
+    });
+}
+
+export function createTutor(email, password) {
+    return new Promise((resolve, reject) => {
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(() => {
+                resolve(true);
+            })
+            .catch((error) => {
+                resolve(error.message);
+            });
+
+        var userId = firebase.auth().currentUser.uid;
+        firebase.database().ref('tutors/' + userId).set({
+            email: email,
+        });
+        console.log("created user with id: " + userId);
+
+    });
+}
+
+
+export function addStudentInfo(name, phone, subject, grade, city) {
+    var userId = firebase.auth().currentUser.uid;
+    firebase.database().ref('students/' + userId).set({
+        name: name,
+        phone: phone,
+        subject: subject,
+        grade: grade,
+        city: city,
+        frozen: true // "frozen" is true if they haven't been matched with a tutor yet
+    });
+}
+
+export function addTutorInfo(name, phone, subjects, exp, degree, city) {
+    var userId = firebase.auth().currentUser.uid;
+    console.log("adding tutor info, user is " + userId);
+    firebase.database().ref('tutors/' + userId).set({
+        name: name,
+        phone: phone,
+        subjects: subjects,
+        city: city,
+        exp: exp,
+        degree: degree,
+        frozen: true // "frozen" is true if they haven't been matched with a student yet
+    });
+}
+
 export function isSignedIn() {
 
 
