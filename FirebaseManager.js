@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import { Tutor } from "./Objects";
 
 const config = {
     apiKey: "AIzaSyBsjlF4FNxju6ise_-PRyyD2ZhPVwyoev4",
@@ -15,6 +16,28 @@ export function getLoggedInUser() {
     return firebase.auth().currentUser;
 }
 
+export function getUserInfo() {
+    return new Promise((resolve, reject) => {
+        firebase.database().ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
+            //check if null to look in students maybe
+
+            resolve(Tutor(snapshot.val().email, '', snapshot.val().name, snapshot.val().phone));
+        })
+    });
+
+
+    // firebase.database().ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
+    //     console.log("FOUND IN TUTORS: " + JSON.stringify(snapshot.val()));
+    // })
+    //
+    // if (firebase.database().ref('students/' + getLoggedInUser().uid) === null) {
+    //     console.log("not in students");
+    //     firebase.ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
+    //         console.log("FOUND IN TUTORS: " + snapshot.val());
+    //     })
+    // }
+}
+
 export function initialize() {
     firebase.initializeApp(config);
 }
@@ -24,37 +47,35 @@ export function createStudent(email, password) {
     return new Promise((resolve, reject) => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(() => {
+                var userId = firebase.auth().currentUser.uid;
+                firebase.database().ref('students/' + userId).set({
+                    email: email,
+                });
                 resolve(true);
-                console.log("successfully created student");
             })
             .catch((error) => {
                 console.log("there was an error");
                 resolve(error.message);
             });
-
-        var userId = firebase.auth().currentUser.uid;
-        firebase.database().ref('students/' + userId).set({
-            email: email,
-        });
-
     });
 }
 
 export function createTutor(email, password) {
+    console.log("logged in user before creation: " + getLoggedInUser())
+
+
     return new Promise((resolve, reject) => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(() => {
+                firebase.database().ref('tutors/' + getLoggedInUser().uid).set({
+                    email: email,
+                });
                 resolve(true);
+
             })
             .catch((error) => {
-                resolve(error.message);
+                reject(error.message);
             });
-
-        var userId = firebase.auth().currentUser.uid;
-        firebase.database().ref('tutors/' + userId).set({
-            email: email,
-        });
-        console.log("created user with id: " + userId);
 
     });
 }
@@ -62,7 +83,7 @@ export function createTutor(email, password) {
 
 export function addStudentInfo(name, phone, subject, grade, city) {
     var userId = firebase.auth().currentUser.uid;
-    firebase.database().ref('students/' + userId).set({
+    firebase.database().ref('students/' + userId).update({
         name: name,
         phone: phone,
         subject: subject,
@@ -73,9 +94,10 @@ export function addStudentInfo(name, phone, subject, grade, city) {
 }
 
 export function addTutorInfo(name, phone, subjects, exp, degree, city) {
+    console.log("logged in user before adding info: " + getLoggedInUser())
     var userId = firebase.auth().currentUser.uid;
     console.log("adding tutor info, user is " + userId);
-    firebase.database().ref('tutors/' + userId).set({
+    firebase.database().ref('tutors/' + userId).update({
         name: name,
         phone: phone,
         subjects: subjects,
@@ -94,9 +116,7 @@ export function isSignedIn() {
     return new Promise((resolve, reject) => {
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                console.log("is Sign in is returning USER IS SIGNED IN");
                 resolve(true);
-                // console.log("after resolve");
             }
             else {
                 resolve(false);
@@ -116,7 +136,6 @@ export function signIn(email, password) {
                 resolve(error.message);
             });
     })
-
 
 }
 

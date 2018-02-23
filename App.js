@@ -9,7 +9,6 @@ import CalendarScreen from './screens/CalendarScreen';
 import Messaging from './screens/Messaging';
 // import LoginScreen from './screens/LoginScreenOld';
 import LoginScreen from './screens/LoginScreen'
-import CreateAccountTutor from "./screens/CreateAccountTutor";
 import Router, { createRootNavigator } from './Router';
 import { initialize } from "./FirebaseManager";
 
@@ -20,8 +19,9 @@ class App extends Component {
         console.disableYellowBox = true;
         initialize();
 
-        var signedIn = false;
-        const Router = createRootNavigator(signedIn);
+        var signedIn = true;
+        var isTutor = true;
+        const Router = createRootNavigator(signedIn, isTutor);
 
         return (
             <Router />

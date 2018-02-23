@@ -1,6 +1,6 @@
 
 
-function Tutor(email, password, name, phone) {
+export function Tutor(email, password, name, phone) {
     const tutorObj = new Object();
     tutorObj.email = email;
     tutorObj.password = password;
@@ -21,7 +21,7 @@ function addSubject(personObj, subject) {
 }
 
 
-function Student(email, password, name, grade, age, school) {
+export function Student(email, password, name, grade, age, school) {
     const studentObj = new Object();
     studentObj.email = email;
     studentObj.password = password;

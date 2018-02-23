@@ -19,6 +19,7 @@ import {
 // import Button as RNButton from 'react-native';
 import { Card, Header, Button } from 'react-native-elements';
 import FlatListWithEnd from 'react-native-flatlist-with-end'
+import CardWithTextInput from '../components/CardWithTextInput';
 
 
 type Props = {};
@@ -66,7 +67,7 @@ class LearningPlanItem extends Component {
     state = {
         editing: false,
         text: '',
-        titleText: '',
+        // titleText: '',
     }
 
     textStyle(item) {
@@ -77,10 +78,20 @@ class LearningPlanItem extends Component {
         }
     }
 
+    onPressChangeTitle() {
+        // AlertIOS.prompt(
+        //     'Enter new title',
+        //     null,
+        //     text => this.props.onChangeTitle(text)
+        // )
+
+    }
+
     renderCard(item) {
+
         if (this.state.editing) {
             return(
-                <Card title={item.title}>
+                <CardWithTextInput isTextInput={true} headerText={item.title} onChangeHeaderText={(text) => this.props.onChangeTitle(text)}>
                     {item.list.map((i, index) => {
                         return (
                             <TouchableOpacity onPress={() => this.props.onItemMarkComplete(index)}>
@@ -118,11 +129,7 @@ class LearningPlanItem extends Component {
                         />
                     </View>
 
-                    <Button title={"Change Title"} buttonStyle={[styles.buttonStyle, { alignSelf: 'center', width: 300 }]} onPress={() => AlertIOS.prompt(
-                        'Enter new title',
-                        null,
-                        text => this.props.onChangeTitle(text)
-                    )}/>
+                    {/*<Button title={"Change Title"} buttonStyle={[styles.buttonStyle, { alignSelf: 'center', width: 300 }]} onPress={() => this.onPressChangeTitle()}/>*/}
 
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
                         <Button title={"Save Plan"} buttonStyle={[styles.buttonStyle]} onPress={() => {
@@ -133,13 +140,13 @@ class LearningPlanItem extends Component {
                         <Button title={"Mark Complete"} buttonStyle={[styles.buttonStyle] } onPress={() => this.props.onCardMarkComplete()}/>
                     </View>
 
-                </Card>
+                </CardWithTextInput>
             );
         }
 
         if (item.complete === false) {
             return(
-                <Card title={item.title}>
+                <CardWithTextInput headerText={item.title}>
                     {item.list.map((i) => {
                         return <Text style={this.textStyle(i)} >{"- " + i.item}</Text>
                     })}
@@ -148,20 +155,20 @@ class LearningPlanItem extends Component {
                         <Button title={"Edit Plan"} buttonStyle={styles.buttonStyle} onPress={() => this.setState({editing: true})}/>
                         <Button title={"Mark Complete"} buttonStyle={styles.buttonStyle} onPress={() => this.props.onCardMarkComplete()}/>
                     </View>
-                </Card>
+                </CardWithTextInput>
             );
         }
         else {
-            return(
-                <Card title={item.title} containerStyle={{ backgroundColor: 'lightgray'}}>
+            return (
+                <CardWithTextInput headerText={item.title} containerStyle={{backgroundColor: 'lightgray'}}>
                     {item.list.map((i) => {
                         return <Text style={this.textStyle(i)}>{"- " + i.item}</Text>
                     })}
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
                         {/*<Button title={"Complete"} buttonStyle={styles.buttonStyle} onPress={() => this.props.onCardMarkComplete()} />*/}
 
                     </View>
-                </Card>
+                </CardWithTextInput>
             );
         }
     }
@@ -169,6 +176,7 @@ class LearningPlanItem extends Component {
     render() {
         console.log("ITEM: " + this.props.lpitem);
         if (this.props.edit) this.state.editing = true;
+
         return(
             this.renderCard(this.props.lpitem.item)
         );

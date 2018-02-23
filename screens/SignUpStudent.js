@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Button, StyleSheet, Image, KeyboardAvoidingView} from 'react-native';
-import SimpleFormComponent from "../SimpleFormComponent";
+import SimpleFormComponent from "../components/SimpleFormComponent";
 import { addStudentInfo } from "../FirebaseManager";
 
 class SignUpStudent extends Component {

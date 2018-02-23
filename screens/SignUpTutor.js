@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet, Image, KeyboardAvoidingView, ScrollView} from 'react-native';
-import SimpleFormComponent from "../SimpleFormComponent";
+import { View, Text, Button as RNButton, StyleSheet, Image, KeyboardAvoidingView, ScrollView} from 'react-native';
+import SimpleFormComponent from "../components/SimpleFormComponent";
 import { addTutorInfo } from "../FirebaseManager";
+import { Button } from 'react-native-elements';
 
 class SignUpTutor extends Component {
 
@@ -26,9 +27,10 @@ class SignUpTutor extends Component {
 
     render() {
         return(
-            <ScrollView>
+
                 <KeyboardAvoidingView style={{ backgroundColor: 'white', height: '100%'}} behavior={"position"} keyboardVerticalOffset={-60}>
 
+                    <ScrollView>
                     <View style={{ height: 50 }}></View>
                     <Text style={styles.title}>New Tutor Application</Text>
                     <View style={{ height: 20 }}></View>
@@ -75,9 +77,9 @@ class SignUpTutor extends Component {
                         onPress={() => this.onPressSignUp()}
                     />
 
-
+                    </ScrollView>
                 </KeyboardAvoidingView>
-            </ScrollView>
+
         );
     }
 }
@@ -86,6 +88,7 @@ const styles= StyleSheet.create({
     button: {
         backgroundColor: '#0093ff',
         borderRadius: 20,
+        marginBottom: 50,
     },
     title: {
         alignSelf: 'center',

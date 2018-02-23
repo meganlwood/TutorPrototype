@@ -1,9 +1,20 @@
 import React, { Component } from 'react';
-import { View, Text, Button as RNButton, StyleSheet, Image, KeyboardAvoidingView} from 'react-native';
+import { View, Text, Button as RNButton, StyleSheet, Image, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements'
-import SimpleFormComponent from "../SimpleFormComponent";
+import SimpleFormComponent from "../components/SimpleFormComponent";
 import { createStudent, createTutor } from "../FirebaseManager";
 import { SignUpStudent } from './SignUpStudent';
+import {
+    BallIndicator,
+    BarIndicator,
+    DotIndicator,
+    MaterialIndicator,
+    PacmanIndicator,
+    PulseIndicator,
+    SkypeIndicator,
+    UIActivityIndicator,
+    WaveIndicator,
+} from 'react-native-indicators';
 
 class CreateAccount extends Component {
 
@@ -13,30 +24,20 @@ class CreateAccount extends Component {
             email: '',
             password: ''
         },
-        type: ''
+        type: '',
+        loading: false,
     }
 
-    /*
-    onPressLogin() {
-        createUser(this.state.email, this.state.password, this.state.type).then(res => {
-            if (res == true) {
-                this.props.navigation.navigate("SignedIn");
-
-            }
-            else {
-                this.state.errors.password = res;
-            }
-        })
-    }
-    */
 
     onPressStudent() {
         console.log("in press student");
+        this.setState({ loading: true });
+
         createStudent(this.state.email, this.state.password).then(res => {
             if (res == true) {
+                this.setState({ loading: false })
                 console.log("successfully made student");
                 this.props.navigation.navigate("SignUpStudent");
-
             }
             else {
                 this.state.errors.password = res;
@@ -46,10 +47,13 @@ class CreateAccount extends Component {
     }
 
     onPressTutor() {
-        createTutor(this.state.email, this.state.password).then(res => {
-            if (res == true) {
-                this.props.navigation.navigate("SignUpTutor");
+        this.setState({ loading: true });
 
+        createTutor(this.state.email, this.state.password).then(res => {
+            console.log("CREATED TUTOR: " + res);
+            if (res == true) {
+                this.setState({ loading: false })
+                this.props.navigation.navigate("SignUpTutor");
             }
             else {
                 this.state.errors.password = res;
@@ -76,7 +80,6 @@ class CreateAccount extends Component {
                 <SimpleFormComponent
                     title={"Password"}
                     onChangeText={(text) => this.setState({ password: text })}
-                    errorMessage={this.state.errors.password}
                     secure={true}
                     keyboard={null}
                 />
@@ -87,6 +90,21 @@ class CreateAccount extends Component {
                     secure={true}
                     keyboard={null}
                 />
+
+
+                <View style={{ height: 40, opacity: this.state.loading? 1 : 0, paddingBotton: 20 }}>
+
+                <DotIndicator
+                    animating={this.state.loading}
+                    // hidden={!this.state.loading}
+                    // size={"large"}
+                    size={15}
+                    color={'#0093ff'}
+                />
+                    <View style={{ height: 20 }}></View>
+
+                </View>
+
                 <Button
                     buttonStyle={styles.button}
                     title={"Sign up as Student"}
@@ -97,14 +115,19 @@ class CreateAccount extends Component {
                     title={"Sign up as Tutor"}
                     onPress={() => this.onPressTutor()}
                 />
+
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                     <RNButton
                         title={"Already have an account? Sign in"}
                         onPress={() => this.props.navigation.goBack()}
                     />
-
-
                 </View>
+                <View style={{ height: 30 }}></View>
+
+
+
+
+
 
 
             </KeyboardAvoidingView>

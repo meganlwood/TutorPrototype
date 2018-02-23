@@ -96,14 +96,14 @@ const Tabs = TabNavigator(
 
 );
 
-export const createRootNavigator = (signedIn) => {
+export const createRootNavigator = (signedIn, tutor) => {
     return StackNavigator(
         {
             SignedOut: {
                 screen: AuthStack,
             },
             SignedIn: {
-                screen: Tabs,
+                screen: tutor? Tabs : HomeStack,
             }
         },
         {

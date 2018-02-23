@@ -12,7 +12,8 @@ class LoginScreen extends Component {
         errors: {
             email: '',
             password: ''
-        }
+        },
+        // loading: false,
     }
 
 
@@ -54,6 +55,7 @@ class LoginScreen extends Component {
                     errorMessage={this.state.errors.email}
                     secure={false}
                     keyboard={'email-address'}
+                    spellcheck={false}
                 />
                 <SimpleFormComponent
                     title={"Password"}
