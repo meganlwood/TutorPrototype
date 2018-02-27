@@ -9,15 +9,21 @@ import SignUpStudent from './screens/Authorization/SignUpStudent';
 import CreateAccount from './screens/Authorization/CreateAccount';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import Home from './screens/ParentSide/Home';
+import ParentHome from './screens/ParentSide/Home';
+import TutorHome from './screens/TutorSide/Home';
 import SignUpTutor from "./screens/Authorization/SignUpTutor";
 import WaitingStudent from "./screens/Authorization/WaitingStudent";
 import WaitingTutor from "./screens/Authorization/WaitingTutor";
 
 
-const HomeStack = StackNavigator({
-    Home: { screen: Home, navigationOptions: { title: "Home" } },
+const ParentHomeStack = StackNavigator({
+    Home: { screen: ParentHome, navigationOptions: { title: "Home" } },
     Messaging: { screen : Messaging, navigationOptions: { title: "Message Your Tutor" } },
+});
+
+const TutorHomeStack = StackNavigator({
+    Home: { screen: TutorHome, navigationOptions: { title: "Home" }},
+    Messaging: { screen: Messaging, navigationOptions: { title: "Message your student "}}
 });
 
 const CalendarStack = StackNavigator({
@@ -49,7 +55,7 @@ const AuthStack = StackNavigator(
 const TutorApp = TabNavigator(
     {
         Home: {
-            screen: HomeStack,
+            screen: TutorHomeStack,
             navigationOptions: {
                 tabBarLabel: "Home",
                 tabBarIcon: ({ tintColor }) => {
@@ -97,7 +103,7 @@ const TutorApp = TabNavigator(
 const ParentApp = TabNavigator(
     {
         Home: {
-            screen: HomeStack,
+            screen: ParentHomeStack,
             navigationOptions: {
                 tabBarLabel: "Home",
                 tabBarIcon: ({ tintColor }) => {

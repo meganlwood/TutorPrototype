@@ -7,9 +7,12 @@ class Messaging extends Component {
 
     state = {
         messages: [],
+        otherPerson: {}
     };
 
     componentWillMount() {
+
+        this.setState({ otherPerson: this.props.navigation.state.params.otherPerson });
 
         this.setState({
             messages: [
@@ -36,6 +39,17 @@ class Messaging extends Component {
                     }
                 }
             ],
+        });
+    }
+
+    componentDidMount() {
+        //this is just to make sure the name came through
+
+        this.onSend({
+           _id: 3,
+           text: `You are messaging with ${this.state.otherPerson.name}`,
+           createdAt: new Date(),
+           system: true,
         });
     }
 
