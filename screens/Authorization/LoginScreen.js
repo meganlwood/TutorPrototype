@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Button as RNButton, StyleSheet, Image, KeyboardAvoidingView } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements'
-import SimpleFormComponent from "./../components/SimpleFormComponent";
+import SimpleFormComponent from "../../components/SimpleFormComponent";
 import firebase from 'firebase';
 
 class LoginScreen extends Component {
@@ -42,7 +42,7 @@ class LoginScreen extends Component {
 
                 <View style={{ height: 50 }}></View>
                 <Image
-                    source={require('./../images/logo2.png')}
+                    source={require('../../images/logo2.png')}
                     style={{ alignSelf: 'center' }}
                 />
                 <View style={{ height: 10 }}></View>

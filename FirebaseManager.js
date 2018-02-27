@@ -19,23 +19,23 @@ export function getLoggedInUser() {
 export function getUserInfo() {
     return new Promise((resolve, reject) => {
         firebase.database().ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
-            //check if null to look in students maybe
+//check if null to look in students maybe
 
             resolve(Tutor(snapshot.val().email, '', snapshot.val().name, snapshot.val().phone));
         })
     });
 
 
-    // firebase.database().ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
-    //     console.log("FOUND IN TUTORS: " + JSON.stringify(snapshot.val()));
-    // })
-    //
-    // if (firebase.database().ref('students/' + getLoggedInUser().uid) === null) {
-    //     console.log("not in students");
-    //     firebase.ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
-    //         console.log("FOUND IN TUTORS: " + snapshot.val());
-    //     })
-    // }
+// firebase.database().ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
+// console.log("FOUND IN TUTORS: " + JSON.stringify(snapshot.val()));
+// })
+//
+// if (firebase.database().ref('students/' + getLoggedInUser().uid) === null) {
+// console.log("not in students");
+// firebase.ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
+// console.log("FOUND IN TUTORS: " + snapshot.val());
+// })
+// }
 }
 
 export function initialize() {
@@ -48,7 +48,7 @@ export function createStudent(email, password) {
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(() => {
                 var userId = firebase.auth().currentUser.uid;
-                firebase.database().ref('students/' + userId).set({
+                firebase.database().ref('parents/' + userId).set({
                     email: email,
                 });
                 resolve(true);
@@ -81,15 +81,20 @@ export function createTutor(email, password) {
 }
 
 
-export function addStudentInfo(name, phone, subject, grade, city) {
+export function addStudentInfo(studentName, parentName, phone, subject, grade, city) {
     var userId = firebase.auth().currentUser.uid;
     firebase.database().ref('students/' + userId).update({
-        name: name,
-        phone: phone,
+        studentName: studentName,
         subject: subject,
         grade: grade,
         city: city,
         frozen: true // "frozen" is true if they haven't been matched with a tutor yet
+    });
+
+    firebase.database().ref('parents/' + userId).update({
+        parentName: parentName,
+        studentName: studentName,
+        phone: phone
     });
 }
 
@@ -152,9 +157,9 @@ export function createUser(email, password) {
 }
 
 export function signOut() {
-    firebase.auth().signOut().then(function() {
+    firebase.auth().signOut().then(function () {
         console.log('Signed Out');
-    }, function(error) {
+    }, function (error) {
         console.error('Sign Out Error', error);
     });
 }

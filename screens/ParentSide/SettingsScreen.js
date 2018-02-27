@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, StyleSheet, Image, ScrollView } from 'react-native';
 import { Button } from 'react-native-elements';
-import {getLoggedInUser, getUserInfo} from "../FirebaseManager";
+import {getLoggedInUser, getUserInfo} from "../../FirebaseManager";
 
 class SettingsScreen extends React.Component {
 
@@ -17,7 +17,7 @@ class SettingsScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Image source={ require("../images/253pgj.jpg") } style={{ width: '100%', height: '100%'}} />
+                <Image source={ require("../../images/253pgj.jpg") } style={{ width: '100%', height: '100%'}} />
 
             </View>
 

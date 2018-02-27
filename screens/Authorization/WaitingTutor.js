@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, Button, StyleSheet, Image, KeyboardAvoidingView} from 'react-native';
-import { userIsFrozen } from "../FirebaseManager";
+import { userIsFrozen } from "../../FirebaseManager";
 
-class WaitingStudent extends Component {
+class WaitingTutor extends Component {
 
     state={
         signedUp: true,
@@ -36,21 +36,21 @@ class WaitingStudent extends Component {
 
     render() {
         return(
-            <KeyboardAvoidingView style={{ backgroundColor: 'white', height: '100%'}} behavior={"position"} keyboardVerticalOffset={-60}>
+            <View style={{ backgroundColor: 'white', height: '100%'}} behavior={"position"} keyboardVerticalOffset={-60}>
 
                 <View style={{ height: 50 }}></View>
                 <Text style={styles.title}>Your application has been sent!</Text>
                 <View style={{ height: 50 }}></View>
                 <Image
-                    source={require('../images/logo2.png')}
+                    source={require('../../images/logo2.png')}
                     style={{ alignSelf: 'center', width: 100, height: 100 }}
                 />
-                <View style={{ height: 10 }}></View>
-                <Text style={styles.title}>We'll send you an email once you have been matched with a tutor.</Text>
+                <View style={{ height: 60 }}></View>
+                <Text style={styles.title}>We'll be in touch via email if you have been selected for an interview.</Text>
 
 
 
-            </KeyboardAvoidingView>
+            </View>
         );
     }
 }
@@ -69,4 +69,4 @@ const styles= StyleSheet.create({
     }
 });
 
-export default WaitingStudent;
+export default WaitingTutor;

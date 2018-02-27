@@ -14,13 +14,14 @@ import {
     TouchableOpacity,
     TextInput,
     Button as RNButton,
-    AlertIOS
+    AlertIOS,
+    KeyboardAvoidingView
 } from 'react-native';
 // import Button as RNButton from 'react-native';
 import { Card, Header, Button } from 'react-native-elements';
 import FlatListWithEnd from 'react-native-flatlist-with-end'
-import CardWithTextInput from '../components/CardWithTextInput';
-
+import CardWithTextInput from '../../components/CardWithTextInput';
+import CheckBox from '../../components/CheckBox';
 
 type Props = {};
 
@@ -94,9 +95,8 @@ class LearningPlanItem extends Component {
                 <CardWithTextInput isTextInput={true} headerText={item.title} onChangeHeaderText={(text) => this.props.onChangeTitle(text)}>
                     {item.list.map((i, index) => {
                         return (
-                            <TouchableOpacity onPress={() => this.props.onItemMarkComplete(index)}>
                                 <View style={{ padding: 5, borderWidth: 1, borderRadius: 5, borderColor: 'gray', marginBottom: 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text style={this.textStyle(i)}>{"- " + i.item}</Text>
+                                    <CheckBox onPress={() => this.props.onItemMarkComplete(index)} checked={i.complete} text={i.item}/>
                                     <Button
                                         title={"Del"}
                                         buttonStyle={
@@ -108,7 +108,6 @@ class LearningPlanItem extends Component {
                                         onPress={() => this.props.onRemoveTask(index)}
                                     />
                                 </View>
-                            </TouchableOpacity>
                         );
 
                     })}
@@ -148,7 +147,7 @@ class LearningPlanItem extends Component {
             return(
                 <CardWithTextInput headerText={item.title}>
                     {item.list.map((i) => {
-                        return <Text style={this.textStyle(i)} >{"- " + i.item}</Text>
+                        return <CheckBox disabled={true} text={i.item} checked={i.complete}/>
                     })}
 
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
@@ -162,7 +161,7 @@ class LearningPlanItem extends Component {
             return (
                 <CardWithTextInput headerText={item.title} containerStyle={{backgroundColor: 'lightgray'}}>
                     {item.list.map((i) => {
-                        return <Text style={this.textStyle(i)}>{"- " + i.item}</Text>
+                        return <CheckBox disabled={true} text={i.item} checked={i.complete}/>
                     })}
                     <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
                         {/*<Button title={"Complete"} buttonStyle={styles.buttonStyle} onPress={() => this.props.onCardMarkComplete()} />*/}
@@ -239,7 +238,7 @@ class LearningPlan extends Component<Props> {
     render() {
         console.log("Rendering: " + this.state.data.items);
         return (
-            <View style={{ flex: 1 }}>
+            <KeyboardAvoidingView behavior={"position"} keyboardVerticalOffset={30}>
                 <FlatListWithEnd
                     data={this.state.data.items}
                     renderItem={(item) => {
@@ -271,7 +270,7 @@ class LearningPlan extends Component<Props> {
                     }
                 />
 
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }

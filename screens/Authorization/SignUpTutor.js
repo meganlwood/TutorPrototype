@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Button as RNButton, StyleSheet, Image, KeyboardAvoidingView, ScrollView} from 'react-native';
-import SimpleFormComponent from "../components/SimpleFormComponent";
-import { addTutorInfo } from "../FirebaseManager";
+import SimpleFormComponent from "../../components/SimpleFormComponent";
+import { addTutorInfo } from "../../FirebaseManager";
 import { Button } from 'react-native-elements';
 
 class SignUpTutor extends Component {
@@ -44,31 +44,31 @@ class SignUpTutor extends Component {
                     <SimpleFormComponent
                         title={"Phone Number"}
                         onChangeText={(text) => this.setState({ phone: text })}
-                        secure={true}
+                        secure={false}
                         keyboard={'phone-pad'}
                     />
                     <SimpleFormComponent
                         title={"Subjects"}
                         onChangeText={(text) => this.setState({ subjects: text })}
-                        secure={true}
+                        secure={false}
                         keyboard={null}
                     />
                     <SimpleFormComponent
                         title={"Do you have tutoring experience?"}
                         onChangeText={(text) => this.setState({ exp: text })}
-                        secure={true}
+                        secure={false}
                         keyboard={'numeric'}
                     />
                     <SimpleFormComponent
                         title={"What is your highest degree obtained?"}
                         onChangeText={(text) => this.setState({ degree: text })}
-                        secure={true}
+                        secure={false}
                         keyboard={null}
                     />
                     <SimpleFormComponent
                         title={"City"}
                         onChangeText={(text) => this.setState({ city: text })}
-                        secure={true}
+                        secure={false}
                         keyboard={null}
                     />
                     <Button

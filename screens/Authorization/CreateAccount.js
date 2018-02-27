@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, Button as RNButton, StyleSheet, Image, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import { View, Text, Button as RNButton, StyleSheet, Image, KeyboardAvoidingView, ActivityIndicator, ScrollView } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements'
-import SimpleFormComponent from "../components/SimpleFormComponent";
-import { createStudent, createTutor } from "../FirebaseManager";
+import SimpleFormComponent from "../../components/SimpleFormComponent";
+import { createStudent, createTutor } from "../../FirebaseManager";
 import { SignUpStudent } from './SignUpStudent';
 import {
     BallIndicator,
@@ -64,8 +64,8 @@ class CreateAccount extends Component {
 
     render() {
         return(
-            <KeyboardAvoidingView style={{ backgroundColor: 'white', height: '100%'}} behavior={"position"} keyboardVerticalOffset={-60}>
-
+            <KeyboardAvoidingView style={{ backgroundColor: 'white', height: '100%'}} behavior={"position"} keyboardVerticalOffset={-150}>
+                <ScrollView>
                 <View style={{ height: 50 }}></View>
                 <Text style={styles.title}>Sign Up</Text>
                 <View style={{ height: 20 }}></View>
@@ -107,7 +107,7 @@ class CreateAccount extends Component {
 
                 <Button
                     buttonStyle={styles.button}
-                    title={"Sign up as Student"}
+                    title={"Sign up new Student"}
                     onPress={() => this.onPressStudent()}
                 />
                 <Button
@@ -126,7 +126,7 @@ class CreateAccount extends Component {
 
 
 
-
+                </ScrollView>
 
 
 

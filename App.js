@@ -3,12 +3,12 @@ import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import { TabNavigator, StackNavigator } from 'react-navigation';
 import { Card, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SettingsScreen from './screens/SettingsScreen';
-import LearningPlan from './screens/LearningPlan';
-import CalendarScreen from './screens/CalendarScreen';
-import Messaging from './screens/Messaging';
+import SettingsScreen from './screens/ParentSide/SettingsScreen';
+import LearningPlan from './screens/TutorSide/LearningPlan';
+import CalendarScreen from './screens/ParentSide/CalendarScreen';
+import Messaging from './screens/ParentSide/Messaging';
 // import LoginScreen from './screens/LoginScreenOld';
-import LoginScreen from './screens/LoginScreen'
+import LoginScreen from './screens/Authorization/LoginScreen'
 import Router, { createRootNavigator } from './Router';
 import { initialize } from "./FirebaseManager";
 
@@ -21,12 +21,12 @@ class App extends Component {
 
         var signedIn = true;
         var isTutor = true;
-        const Router = createRootNavigator(signedIn, isTutor);
+        var waiting = false;
+        const Router = createRootNavigator(signedIn, isTutor, waiting);
 
         return (
             <Router />
         );
-
 
     }
 }
