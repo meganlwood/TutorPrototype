@@ -3,8 +3,6 @@ import { View, Text } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements'
 
 const SimpleFormComponent = (props) => {
-    console.log("secure: " + props.secure);
-
 
     return(
         <View>

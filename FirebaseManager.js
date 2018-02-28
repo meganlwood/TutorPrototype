@@ -16,6 +16,93 @@ export function getLoggedInUser() {
     return firebase.auth().currentUser;
 }
 
+export function getLoggedInUserPromise() {
+    return new Promise((resolve, reject) => {
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                resolve(user);
+            } else {
+                // No user is signed in.
+                reject(null);
+            }
+        });
+    })
+
+
+}
+
+export function getConversation(other, user) {
+    console.log("~~IN GET NEW CONVERSATION")
+    //search conversations and look at the first message of each conversation
+    //if it is between those two users, return that conversation
+    return new Promise((resolve, reject) => {
+        firebase.database().ref('conversations/').on('value', function(snapshot) {
+
+            //console.log(JSON.stringify(snapshot.val()));
+            for (var key in snapshot.val()) {
+                //key is convo id, array of messages is value
+                console.log("key: " + key);
+                var messages = snapshot.val()[key];
+                if (messages.length > 0) {
+                    var firstMessage = messages[0];
+                    console.log("first message: " + firstMessage);
+                    getMessageInfo(firstMessage, key).then(res => {
+                        //console.log("MESSAGE: " + JSON.stringify(res));
+                        //if (message != null) {
+                        var to = res.to;
+                        var from = res.from;
+                        console.log("from: " + from + ", to: " + to + "key: " + res.key);
+                        console.log("other: " + other + ", user: " + user);
+                        if ((other === to && user === from) || (other === from && user === to)) {
+                            console.log("found the convo!");
+                            console.log("returning: " + res.key);
+                            console.log("messages: " + snapshot.val()[res.key]);
+                            resolve({messages: snapshot.val()[res.key], key: res.key});
+                        }
+                        //}
+                    });
+
+                }
+            }
+        })
+
+        //CANNOT have a conversation without messages, so return null. once someone sends a message, then update
+        //if it did not find the conversation, create a new one using push
+    });
+}
+
+
+export function getMessageInfo(firstMessage, key) {
+    console.log("~~in message info: " + firstMessage);
+    return new Promise((resolve, reject) => {
+        firebase.database().ref('messages/' + firstMessage).on('value', function(snapshot) {
+            console.log("Conversation: " + JSON.stringify(snapshot.val()));
+            var json = JSON.parse(JSON.stringify(snapshot));
+            //console.log("message info for message" + firstMessage + ":" + json["from"]);
+            resolve({from: json["from"], to: json["to"], key: key});
+
+        });
+
+        //CANNOT have a conversation without messages, so return null. once someone sends a message, then update
+        //if it did not find the conversation, create a new one using push
+    });
+}
+
+
+export function getMessage(messageID) {
+    console.log("message id: " + messageID);
+    return new Promise((resolve, reject) => {
+        firebase.database().ref('messages/' + messageID).on('value', function(snapshot) {
+            console.log("GETMESSAGE:  message = " + JSON.stringify(snapshot));
+            console.log(snapshot.val().message);
+            resolve({to: snapshot.val().to, message: snapshot.val().message, timestamp: snapshot.val().timestamp});
+
+        });
+    });
+}
+
+
+
 export function getUserInfo() {
     return new Promise((resolve, reject) => {
         firebase.database().ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
@@ -25,17 +112,111 @@ export function getUserInfo() {
         })
     });
 
+}
 
-// firebase.database().ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
-// console.log("FOUND IN TUTORS: " + JSON.stringify(snapshot.val()));
-// })
-//
-// if (firebase.database().ref('students/' + getLoggedInUser().uid) === null) {
-// console.log("not in students");
-// firebase.ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
-// console.log("FOUND IN TUTORS: " + snapshot.val());
-// })
-// }
+export function addMessage(message, convoKey, currentUser, otherPerson) {
+    return new Promise((resolve, reject) => {
+        //sender is current logged in user, other person is other person
+        var messageRef = firebase.database().ref("messages/").push();
+        console.log("message: " + messageRef.key + "\nto: " + otherPerson + ", from: " + currentUser.name + ", message: " + message[0].text + " timestamp: " + message[0].createdAt);
+        messageRef.set({
+            to: otherPerson,
+            from: currentUser.name,
+            message: message[0].text,
+            timestamp: message[0].createdAt.toLocaleString(),
+        });
+        console.log("convokey: " + convoKey);
+        if (convoKey === '') {
+            console.log("convokey is empty");
+            var convoRef = firebase.database().ref("conversations/").push();
+            convoRef.set({
+                0: messageRef.key,
+            })
+            resolve(true);
+        }
+        else {
+            //get array using key
+            //push messageRef.key to array
+            var convoRef = firebase.database().ref("conversations/" + convoKey);
+            console.log("convokey: " + convoKey);
+            convoRef.on('value', function(snapshot) {
+                var messagesArr = snapshot.val();
+                console.log("messages so far: " + messagesArr);
+                messagesArr.push(messageRef.key);
+                //set
+                console.log("messages after push: " + messagesArr);
+
+                firebase.database().ref("conversations/").update({
+                    [convoKey]: messagesArr,
+                })
+
+            });
+            resolve(true);
+        }
+    });
+
+
+
+
+}
+
+export function addMessagetoMessages(message) {
+    return new Promise((resolve, reject) => {
+        var messageRef = firebase.database().ref("messages/").push();
+        console.log("message: " + messageRef.key + "\nto: " + otherPerson + ", from: " + currentUser.name + ", message: " + message[0].text + " timestamp: " + message[0].createdAt);
+        messageRef.set({
+            to: otherPerson,
+            from: currentUser.name,
+            message: message[0].text,
+            timestamp: message[0].createdAt.toLocaleString(),
+        });
+        resolve(messageRef);
+    });
+
+}
+
+export function createConvo(messageId) {
+    return new Promise((resolve, reject) => {
+        var convoRef = firebase.database().ref("conversations/").push();
+        convoRef.set({
+            0: messageId,
+        });
+        resolve(convoRef != null);
+    });
+
+}
+
+export function addToConvo(messageId, convoKey) {
+    return new Promise((resolve, reject) => {
+        var convoRef = firebase.database().ref("conversations/" + convoKey);
+        console.log("convokey: " + convoKey);
+        convoRef.on('value', function(snapshot) {
+            updateMessages(snapshot.val(), messageId, convoKey).then(res => {
+                resolve(res);
+            });
+        });
+    });
+}
+
+export function updateMessages(arr, id, convoKey) {
+    return new Promise((resolve, reject) => {
+       arr.push(id);
+       firebase.database().ref("conversations/").update({
+           [convoKey]: arr,
+       });
+       resolve(arr);
+    });
+}
+
+
+export function getTutor(uid) {
+    return new Promise((resolve, reject) => {
+        firebase.database().ref('tutors/' + uid).on('value', function(snapshot) {
+//check if null to look in students maybe
+
+            resolve(snapshot);
+        })
+    });
 }
 
 export function initialize() {

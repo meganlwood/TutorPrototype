@@ -1,19 +1,74 @@
 import React, { Component } from 'react';
 import { GiftedChat, Actions, CustomActions } from 'react-native-gifted-chat'; // 0.3.0
 import ImagePicker from 'react-native-image-picker'; // 0.26.7
+import {addMessage} from "../../FirebaseManager";
+import {getConversation, getMessage, addMessagetoMessages, createConvo, addToConvo} from "../../FirebaseManager";
 
 class Messaging extends Component {
 
 
     state = {
         messages: [],
-        otherPerson: {}
+        otherPerson: {},
+        currentUser: {},
+        conversation: [],
+        convoKey: '',
+        mounted: false,
+
     };
 
     componentWillMount() {
+        console.log("~~IN COMPONENT WILL MOUNT, mounted = " + this.state.mounted);
+        if (!this.state.mounted) {
+            //console.log("PARAMS: " + JSON.stringify(this.props.navigation.state.params));
+            this.setState({ otherPerson: this.props.navigation.state.params.otherPerson, currentUser: this.props.navigation.state.params.currentUser});
+            //otherPerson is just their name, convert to their
+            //pull messages from firebase here
+            if (this.props.navigation.state.params.currentUser.haveConvo) {
+                getConversation(this.props.navigation.state.params.otherPerson, this.props.navigation.state.params.currentUser.name).then(res => {
+                    console.log("conversation: " + res);
+                    this.setState({conversation: res.messages, convoKey: res.key});
+                    console.log("CONVO KEY: " + res.key);
+                    var conversation = res.messages;
+                    //var messages = [];
+                    for (var message in conversation) {
+                        console.log("looking at id " + conversation[message]);
+                        getMessage(conversation[message]).then(res => {
+                            console.log("RECEIVED MESSAGE!!!!!1" + JSON.stringify(res));
+                            var text = res.message;
+                            var createdAt = res.timestamp;
+                            var _id = this.state.messages.length + 1;
+                            var to = res.to;
+                            //var from = res.from;
+                            var userId = -1;
+                            var senderName = "";
+                            console.log("text: " + text);
+                            if (this.state.currentUser.name === to) {
+                                userId = 2;
+                                senderName = this.state.otherPerson;
+                            } //user received a message
+                            else {
+                                userId = 1;
+                                senderName = this.state.currentUser.name;
+                            }
 
-        this.setState({ otherPerson: this.props.navigation.state.params.otherPerson });
+                            //sender is 1, receiver is 2
+                            //messages.push({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}});
+                            //console.log("messages now has length: " + messages.length);
+                            this.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
+                            //this.setState({messages: messages});
+                        });
+                    }
+                });
 
+            }
+            this.setState({mounted: true})
+        }
+
+
+        //if conversation == null, push new one to firebase and return that
+        //set the state to be the conversation
+/*
         this.setState({
             messages: [
                 {
@@ -37,24 +92,65 @@ class Messaging extends Component {
                         name: "Megan",
 
                     }
+                },
+                {
+                    _id: 3,
+                    text: "Hey again",
+                    createdAt: new Date(),
+                    user: {
+                        _id: 1,
+                        name: "Megan",
+
+                    }
                 }
             ],
         });
+*/
     }
+
 
     componentDidMount() {
         //this is just to make sure the name came through
 
-        this.onSend({
-           _id: 3,
-           text: `You are messaging with ${this.state.otherPerson.name}`,
-           createdAt: new Date(),
-           system: true,
-        });
+        // this.onSend({
+        //    _id: 3,
+        //    text: `You are messaging with ${this.state.otherPerson}`,
+        //    createdAt: new Date(),
+        //    system: true,
+        // });
     }
 
-    onSend(message = []) {
+    onSend(message = [], newMessage) {
         console.log(message);
+        //receiver, sender, convo key
+        //add to messages list and append to conversation
+        if (newMessage) {
+            var messageId = '';
+            addMessagetoMessages(message).then(res => {
+                messageId = res;
+            });
+
+            if (this.state.convoKey === '') {
+                createConvo(messageId).then(res => {
+                    if (res === true) {
+                        console.log("successfully created convo");
+                    }
+                });
+            }
+            else {
+                addToConvo(messageId, this.state.convoKey).then(res => {
+                    console.log("RES should be updated array: " + res);
+                });
+            }
+/*
+            addMessage(message, this.state.convoKey, this.state.currentUser, this.state.otherPerson).then(res => {
+                if (res == true) {
+                    console.log("success");
+                }
+            });
+            */
+        }
+
 
         this.setState(previousState => ({
             messages: GiftedChat.append(previousState.messages, message),
@@ -115,7 +211,7 @@ class Messaging extends Component {
         return (
             <GiftedChat
                 messages={this.state.messages}
-                onSend={messages => this.onSend(messages)}
+                onSend={messages => this.onSend(messages, true)}
                 user={{
                     _id: 1,
                 }}
