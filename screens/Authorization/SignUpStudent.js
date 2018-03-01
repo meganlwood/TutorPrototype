@@ -13,12 +13,19 @@ class SignUpStudent extends Component {
         subject: '',
         grade: '',
         city: '',
+        newParent: true
 
     };
 
+    componentWillMount() {
+        if (this.props.navigation.state.params.parentName != null) {
+            this.setState({parentName: this.props.navigation.state.params.parentName, newParent: false});
+        }
+    }
+
     onPressSignUp() {
         this.state.frozen = true;
-        addStudentInfo(this.state.studentName, this.state.parentName, this.state.phone, this.state.subject, this.state.grade, this.state.city); //automatically frozen
+        addStudentInfo(this.state.studentName, this.state.parentName, this.state.phone, this.state.subject, this.state.grade, this.state.city, this.state.newParent); //automatically frozen
         //now should navigate to waiting screen
         this.props.navigation.navigate("WaitingStudent");
     }
@@ -35,12 +42,13 @@ class SignUpStudent extends Component {
                     <Text style={styles.title}>New Student Sign Up</Text>
                     <View style={{ height: 20 }}></View>
 
+                    {this.state.newParent ?
                     <SimpleFormComponent
                         title={"Full Name (Parent)"}
                         onChangeText={(text) => this.setState({ parentName: text })}
                         secure={false}
                         keyboard={null}
-                    />
+                    /> : null}
                     <SimpleFormComponent
                         title={"Full Name (Student)"}
                         onChangeText={(text) => this.setState({ studentName: text })}

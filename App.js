@@ -20,7 +20,7 @@ class App extends Component {
         initialize();
 
         var signedIn = true;
-        var isTutor = true;
+        var isTutor = false;
         var waiting = false;
         const Router = createRootNavigator(signedIn, isTutor, waiting);
 

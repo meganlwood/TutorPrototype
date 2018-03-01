@@ -32,16 +32,13 @@ export function getLoggedInUserPromise() {
 }
 
 export function getConversation(other, user) {
-    console.log("~~IN GET NEW CONVERSATION")
     //search conversations and look at the first message of each conversation
     //if it is between those two users, return that conversation
     return new Promise((resolve, reject) => {
         firebase.database().ref('conversations/').on('value', function(snapshot) {
-            console.log("GOT CONVERSATION: " + JSON.stringify(snapshot.val()));
             //console.log(JSON.stringify(snapshot.val()));
             for (var key in snapshot.val()) {
                 //key is convo id, array of messages is value
-                console.log("key: " + key);
 
                 //var messagesID = snapshot.val()[key];
                 //var messages = messagesID["messages"];
@@ -49,14 +46,11 @@ export function getConversation(other, user) {
                 console.log("messages: " + JSON.stringify(messages));
                 if (messages.length > 0) {
                     var firstMessage = messages[0];
-                    console.log("first message: " + firstMessage);
                     getMessageInfo(firstMessage, key).then(res => {
                         //console.log("MESSAGE: " + JSON.stringify(res));
                         //if (message != null) {
                         var to = res.to;
                         var from = res.from;
-                        console.log("from: " + from + ", to: " + to + "key: " + res.key);
-                        console.log("other: " + other + ", user: " + user);
                         if ((other === to && user === from) || (other === from && user === to)) {
                             console.log("found the convo!");
                             console.log("returning: " + res.key);
@@ -81,7 +75,6 @@ export function getMessageInfo(firstMessage, key) {
     console.log("~~in message info: " + firstMessage);
     return new Promise((resolve, reject) => {
         firebase.database().ref('messages/' + firstMessage).on('value', function(snapshot) {
-            console.log("Conversation: " + JSON.stringify(snapshot.val()));
             var json = JSON.parse(JSON.stringify(snapshot));
             //console.log("message info for message" + firstMessage + ":" + json["from"]);
             resolve({from: json["from"], to: json["to"], key: key});
@@ -98,7 +91,6 @@ export function getMessage(messageID) {
     console.log("message id: " + messageID);
     return new Promise((resolve, reject) => {
         firebase.database().ref('messages/' + messageID).on('value', function(snapshot) {
-            console.log("GETMESSAGE:  message = " + JSON.stringify(snapshot));
             console.log(snapshot.val().message);
             resolve({to: snapshot.val().to, message: snapshot.val().message, timestamp: snapshot.val().timestamp});
 
@@ -121,7 +113,6 @@ export function getUserInfo() {
 
 export function addMessage(message, convoKey, currentUser, otherPerson) {
     return new Promise((resolve, reject) => {
-        //sender is current logged in user, other person is other person
         var messageRef = firebase.database().ref("messages/").push();
         console.log("message: " + messageRef.key + "\nto: " + otherPerson + ", from: " + currentUser.name + ", message: " + message[0].text + " timestamp: " + message[0].createdAt);
         messageRef.set({
@@ -132,11 +123,23 @@ export function addMessage(message, convoKey, currentUser, otherPerson) {
         });
         console.log("convokey: " + convoKey);
         if (convoKey === '') {
-            console.log("convokey is empty");
             var convoRef = firebase.database().ref("conversations/").push();
-            convoRef.set({
+            firebase.database().ref("conversations/" + convoRef.key).set({
                 0: messageRef.key,
-            })
+            });
+/*
+            var userId = firebase.auth().currentUser.uid;
+            if (firebase.database().ref("tutors/" + userId) === null) {
+                firebase.database().ref("students/" + userId).update({
+                    haveConvo: true,
+                })
+            }
+            else {
+                firebase.database().ref("tutors/" + userId).update({
+                    haveConvo: true,
+                })
+            }
+*/
             resolve(true);
         }
         else {
@@ -156,7 +159,7 @@ export function addMessage(message, convoKey, currentUser, otherPerson) {
                     //set
                     console.log("messages after push: " + messagesArr);
 
-                    firebase.database().ref("conversations/").set({
+                    firebase.database().ref("conversations/").update({
                         [convoKey]: messagesArr,
                     })
                 }
@@ -172,6 +175,7 @@ export function addMessage(message, convoKey, currentUser, otherPerson) {
 
 }
 
+/*
 export function addMessagetoMessages(message) {
     return new Promise((resolve, reject) => {
         var messageRef = firebase.database().ref("messages/").push();
@@ -223,10 +227,21 @@ export function updateMessages(arr, id, convoKey) {
     });
 }
 
-
+*/
 export function getTutor(uid) {
     return new Promise((resolve, reject) => {
         firebase.database().ref('tutors/' + uid).on('value', function(snapshot) {
+//check if null to look in students maybe
+
+            resolve(snapshot);
+        })
+    });
+}
+
+export function getParent(uid) {
+    console.log("getting parent");
+    return new Promise((resolve, reject) => {
+        firebase.database().ref('parents/' + uid).on('value', function(snapshot) {
 //check if null to look in students maybe
 
             resolve(snapshot);
@@ -277,7 +292,7 @@ export function createTutor(email, password) {
 }
 
 
-export function addStudentInfo(studentName, parentName, phone, subject, grade, city) {
+export function addStudentInfo(studentName, parentName, phone, subject, grade, city, newParent) {
     var userId = firebase.auth().currentUser.uid;
     firebase.database().ref('students/' + userId).update({
         studentName: studentName,
@@ -286,12 +301,28 @@ export function addStudentInfo(studentName, parentName, phone, subject, grade, c
         city: city,
         frozen: true // "frozen" is true if they haven't been matched with a tutor yet
     });
+    if (newParent) {
+        firebase.database().ref('parents/' + userId).update({
+            parentName: parentName,
+            studentName: studentName,
+            phone: phone
+        });
+    }
+    else {
+        firebase.database().ref('parents/' + userId + '/students').on('value', function(snapshot) {
+            var arr = []
+            if (snapshot.val() === null) {
+                arr = []
+            }
+            else arr = snapshot.val();
 
-    firebase.database().ref('parents/' + userId).update({
-        parentName: parentName,
-        studentName: studentName,
-        phone: phone
-    });
+            arr.push(studentName);
+            firebase.database().ref('parents/' + userId + '/students').set({
+                students: arr,
+            })
+
+        });
+    }
 }
 
 export function addTutorInfo(name, phone, subjects, exp, degree, city) {

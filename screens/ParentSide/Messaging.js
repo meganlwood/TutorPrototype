@@ -13,29 +13,23 @@ class Messaging extends Component {
         currentUser: {},
         conversation: [],
         convoKey: '',
-        mounted: false,
 
     };
 
     componentWillMount() {
-        console.log("~~IN COMPONENT WILL MOUNT, mounted = " + this.state.mounted);
-        if (!this.state.mounted) {
-            //console.log("PARAMS: " + JSON.stringify(this.props.navigation.state.params));
             this.setState({ otherPerson: this.props.navigation.state.params.otherPerson, currentUser: this.props.navigation.state.params.currentUser});
             //otherPerson is just their name, convert to their
             //pull messages from firebase here
-            if (this.props.navigation.state.params.currentUser.haveConvo) {
+            //if (this.props.navigation.state.params.currentUser.haveConvo) {
                 getConversation(this.props.navigation.state.params.otherPerson, this.props.navigation.state.params.currentUser.name).then(res => {
-                    console.log("conversation: " + JSON.stringify(res));
                     this.setState({conversation: res.messages, convoKey: res.key});
-                    console.log("CONVO KEY: " + res.key);
                     var conversation = res.messages;
 
                     //var messages = [];
                     for (var message in conversation) {
                         console.log("looking at id " + conversation[message]);
                         getMessage(conversation[message]).then(res => {
-                            console.log("RECEIVED MESSAGE!!!!!1" + JSON.stringify(res));
+                            //console.log("RECEIVED MESSAGE!!!!!1" + JSON.stringify(res));
                             var text = res.message;
                             var createdAt = res.timestamp;
                             var _id = this.state.messages.length + 1;
@@ -53,22 +47,14 @@ class Messaging extends Component {
                                 senderName = this.state.currentUser.name;
                             }
 
-                            //sender is 1, receiver is 2
-                            //messages.push({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}});
-                            //console.log("messages now has length: " + messages.length);
                             this.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
-                            //this.setState({messages: messages});
                         });
                     }
                 });
 
-            }
-            this.setState({mounted: true})
-        }
+            //}
 
 
-        //if conversation == null, push new one to firebase and return that
-        //set the state to be the conversation
 /*
         this.setState({
             messages: [
@@ -110,17 +96,6 @@ class Messaging extends Component {
     }
 
 
-    componentDidMount() {
-        //this is just to make sure the name came through
-
-        // this.onSend({
-        //    _id: 3,
-        //    text: `You are messaging with ${this.state.otherPerson}`,
-        //    createdAt: new Date(),
-        //    system: true,
-        // });
-    }
-
     onSend(message = [], newMessage) {
         console.log(message);
         //receiver, sender, convo key
@@ -159,7 +134,6 @@ class Messaging extends Component {
             messages: GiftedChat.append(previousState.messages, message),
         }));
 
-        console.log(JSON.stringify(this.state));
     }
 
     pickPhoto() {

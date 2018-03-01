@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Messaging from './Messaging';
 // import LoginScreen from './screens/LoginScreenOld';
 import LoginScreen from '../Authorization/LoginScreen'
+import {getLoggedInUserPromise, getParent} from "../../FirebaseManager";
 // import CreateAccountTutor from "./screens/CreateAccountTutor";
 
 DATA = {
@@ -68,8 +69,27 @@ class Home extends Component {
 
     state={
         data: DATA,
+        parentName: "Mom Smith",
     }
+/*
+    componentWillMount() {
+        console.log("HELLO!!!!!")
+        getLoggedInUserPromise().then(user => {
+                var userID = user.uid;
+                console.log("user: " + userID);
+                getParent(userID).then(res => {
+                    console.log(JSON.stringify(res));
+                    var json = JSON.parse(JSON.stringify(res));
 
+                    this.setState({data: json})
+                    var studentsArr = [];
+                    studentsArr.push(json.studentName);
+                    //students do not have a user id
+                });
+            }
+        );
+    }
+*/
     renderNextSessionCards(students) {
         return students.map((student) => {
             return <Card title={`${student.name}'s next Tutoring Session`}>
@@ -147,6 +167,9 @@ class Home extends Component {
 
                 {this.renderNextSessionCards(students)}
                 {this.renderTutorCards(students, tutors)}
+                <Button onPress={() => this.props.navigation.navigate('SignUpStudent', {parentName: this.state.parentName})}
+                        title={`Add New Student`}
+                        buttonStyle={styles.buttonStyle}/>
 
             </ScrollView>
 
