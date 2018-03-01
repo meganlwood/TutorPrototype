@@ -125,6 +125,8 @@ class Messaging extends Component {
         //receiver, sender, convo key
         //add to messages list and append to conversation
         if (newMessage) {
+            addMessage(message, this.state.convoKey, this.state.currentUser, this.state.otherPerson );
+            /*
             var messageId = '';
             addMessagetoMessages(message).then(res => {
                 messageId = res;

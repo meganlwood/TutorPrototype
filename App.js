@@ -19,7 +19,7 @@ class App extends Component {
         console.disableYellowBox = true;
         initialize();
 
-        var signedIn = true;
+        var signedIn = false;
         var isTutor = true;
         var waiting = false;
         const Router = createRootNavigator(signedIn, isTutor, waiting);

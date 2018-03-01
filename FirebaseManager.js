@@ -200,7 +200,10 @@ export function addToConvo(messageId, convoKey) {
 
 export function updateMessages(arr, id, convoKey) {
     return new Promise((resolve, reject) => {
+        console.log("before add id: " + arr);
+        console.log("id: " + id);
        arr.push(id);
+       console.log("after add id: " + arr);
        firebase.database().ref("conversations/").update({
            [convoKey]: arr,
        });
