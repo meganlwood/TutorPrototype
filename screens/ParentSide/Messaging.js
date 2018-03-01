@@ -26,10 +26,11 @@ class Messaging extends Component {
             //pull messages from firebase here
             if (this.props.navigation.state.params.currentUser.haveConvo) {
                 getConversation(this.props.navigation.state.params.otherPerson, this.props.navigation.state.params.currentUser.name).then(res => {
-                    console.log("conversation: " + res);
+                    console.log("conversation: " + JSON.stringify(res));
                     this.setState({conversation: res.messages, convoKey: res.key});
                     console.log("CONVO KEY: " + res.key);
                     var conversation = res.messages;
+
                     //var messages = [];
                     for (var message in conversation) {
                         console.log("looking at id " + conversation[message]);

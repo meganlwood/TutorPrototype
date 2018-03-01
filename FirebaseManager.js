@@ -37,12 +37,16 @@ export function getConversation(other, user) {
     //if it is between those two users, return that conversation
     return new Promise((resolve, reject) => {
         firebase.database().ref('conversations/').on('value', function(snapshot) {
-
+            console.log("GOT CONVERSATION: " + JSON.stringify(snapshot.val()));
             //console.log(JSON.stringify(snapshot.val()));
             for (var key in snapshot.val()) {
                 //key is convo id, array of messages is value
                 console.log("key: " + key);
+
+                //var messagesID = snapshot.val()[key];
+                //var messages = messagesID["messages"];
                 var messages = snapshot.val()[key];
+                console.log("messages: " + JSON.stringify(messages));
                 if (messages.length > 0) {
                     var firstMessage = messages[0];
                     console.log("first message: " + firstMessage);
@@ -57,6 +61,7 @@ export function getConversation(other, user) {
                             console.log("found the convo!");
                             console.log("returning: " + res.key);
                             console.log("messages: " + snapshot.val()[res.key]);
+                            //resolve({messages: snapshot.val()[res.key]["messages"], key: res.key});
                             resolve({messages: snapshot.val()[res.key], key: res.key});
                         }
                         //}
@@ -140,15 +145,22 @@ export function addMessage(message, convoKey, currentUser, otherPerson) {
             var convoRef = firebase.database().ref("conversations/" + convoKey);
             console.log("convokey: " + convoKey);
             convoRef.on('value', function(snapshot) {
+                //var messagesArr = snapshot.val()["messages"];]
                 var messagesArr = snapshot.val();
                 console.log("messages so far: " + messagesArr);
-                messagesArr.push(messageRef.key);
-                //set
-                console.log("messages after push: " + messagesArr);
+                if (messagesArr.includes(messageRef.key)) {
+                    resolve(true);
+                }
+                else {
+                    messagesArr.push(messageRef.key);
+                    //set
+                    console.log("messages after push: " + messagesArr);
 
-                firebase.database().ref("conversations/").update({
-                    [convoKey]: messagesArr,
-                })
+                    firebase.database().ref("conversations/").set({
+                        [convoKey]: messagesArr,
+                    })
+                }
+
 
             });
             resolve(true);
