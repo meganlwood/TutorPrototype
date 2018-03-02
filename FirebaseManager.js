@@ -1,13 +1,22 @@
 import firebase from 'firebase';
 import { Tutor } from "./Objects";
 
+// const config = {
+//     apiKey: "AIzaSyBsjlF4FNxju6ise_-PRyyD2ZhPVwyoev4",
+//     authDomain: "itutoru-ef7e2.firebaseapp.com",
+//     databaseURL: "https://itutoru-ef7e2.firebaseio.com",
+//     projectId: "itutoru-ef7e2",
+//     storageBucket: "itutoru-ef7e2.appspot.com",
+//     messagingSenderId: "115499384435"
+// };
+
 const config = {
-    apiKey: "AIzaSyBsjlF4FNxju6ise_-PRyyD2ZhPVwyoev4",
-    authDomain: "itutoru-ef7e2.firebaseapp.com",
-    databaseURL: "https://itutoru-ef7e2.firebaseio.com",
-    projectId: "itutoru-ef7e2",
-    storageBucket: "itutoru-ef7e2.appspot.com",
-    messagingSenderId: "115499384435"
+    apiKey: "AIzaSyDIEOu99SaPq8TSdT_ep2EqrzhaDUFJ36Y",
+    authDomain: "itutoru-megan-refactor.firebaseapp.com",
+    databaseURL: "https://itutoru-megan-refactor.firebaseio.com",
+    projectId: "itutoru-megan-refactor",
+    storageBucket: "",
+    messagingSenderId: "842705651129"
 };
 
 var loading = true;
@@ -27,13 +36,43 @@ export function getLoggedInUserPromise() {
             }
         });
     })
+}
+
+export function getStudent(uid) {
+    return new Promise((resolve, reject) => {
+        firebase.database().ref('students/' + uid).on('value', function(snapshot) {
+            resolve({ id: uid, data: snapshot.val() });
+        })
+    })
+}
 
 
+export function getConversationFromKey(key) {
+    console.log("getting conversation from key: " + key);
+
+
+    return new Promise((resolve, reject) => {
+        firebase.database().ref('conversations/' + key).on('value', function(snapshot) {
+            if (snapshot.val() === null) resolve(null);
+            else {
+                console.log("resolving conversation: ");
+                console.log(snapshot.val());
+                resolve(snapshot.val());
+            }
+        })
+    })
 }
 
 export function getConversation(other, user) {
     //search conversations and look at the first message of each conversation
     //if it is between those two users, return that conversation
+
+    /*
+        can we instead just have each user (tutor and parent) have the id of the conversation?
+        all this work for nothing RIP
+     */
+
+
     return new Promise((resolve, reject) => {
         firebase.database().ref('conversations/').on('value', function(snapshot) {
             //console.log(JSON.stringify(snapshot.val()));
@@ -109,6 +148,30 @@ export function getUserInfo() {
         })
     });
 
+}
+
+export function addMessage2(convoKey, message, fromID, toID) {
+    var messageRef = firebase.database().ref('messages/').push();
+    messageRef.set({
+        to: toID,
+        from: fromID,
+        message: message.text,
+        timestamp: message.createdAt.toLocaleString()
+    });
+    var convoRef = firebase.database().ref("conversations/" + convoKey);
+    convoRef.on('value', function(snapshot) {
+        var messagesArr = snapshot.val();
+        if (messagesArr === null) messagesArr = [];
+        if (messagesArr.includes(messageRef.key)) {
+            return;
+        }
+        else {
+            messagesArr.push(messageRef.key);
+            firebase.database().ref("conversations/").update({
+                [convoKey]: messagesArr,
+            })
+        }
+    });
 }
 
 export function addMessage(message, convoKey, currentUser, otherPerson) {
@@ -238,6 +301,15 @@ export function getTutor(uid) {
     });
 }
 
+export function getStudentsForTutor(tutorUID) {
+    return new Promise((resolve, reject) => {
+        firebase.database().ref('tutors/' + tutorUID).on('value', function(snapshot) {
+            console.log("students for tutor are: " + JSON.stringify(snapshot.val().students));
+            resolve([snapshot.val().students]);
+        })
+    });
+}
+
 export function getParent(uid) {
     console.log("getting parent");
     return new Promise((resolve, reject) => {
@@ -336,14 +408,12 @@ export function addTutorInfo(name, phone, subjects, exp, degree, city) {
         city: city,
         exp: exp,
         degree: degree,
-        frozen: true // "frozen" is true if they haven't been matched with a student yet
+        frozen: true, // "frozen" is true if they haven't been matched with a student yet
+        students: []
     });
 }
 
 export function isSignedIn() {
-
-
-    console.log("called isSignIn");
 
     return new Promise((resolve, reject) => {
         firebase.auth().onAuthStateChanged(function(user) {

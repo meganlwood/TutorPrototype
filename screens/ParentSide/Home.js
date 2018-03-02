@@ -6,10 +6,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 // import SettingsScreen from './screens/SettingsScreen';
 // import LearningPlan from './screens/LearningPlan';
 // import CalendarScreen from './screens/CalendarScreen';
-import Messaging from './Messaging';
+import Messaging from './../TutorSide/Messaging';
 // import LoginScreen from './screens/LoginScreenOld';
 import LoginScreen from '../Authorization/LoginScreen'
-import {getLoggedInUserPromise, getParent} from "../../FirebaseManager";
+import {getLoggedInUserPromise, getParent, getStudent} from "../../FirebaseManager";
 // import CreateAccountTutor from "./screens/CreateAccountTutor";
 
 DATA = {
@@ -70,6 +70,8 @@ class Home extends Component {
     state={
         data: DATA,
         parentName: "Mom Smith",
+        tutorId: '',
+        studentId: '',
     }
 /*
     componentWillMount() {
@@ -89,7 +91,19 @@ class Home extends Component {
             }
         );
     }
+
 */
+    componentWillMount() {
+        getLoggedInUserPromise().then(user => {
+            var userID = user.uid;
+            getStudent(userID).then(res => {
+                console.log("LOADED THE STUDENT");
+                console.log(res);
+                this.setState({ tutorId: res.data.tutor, studentId: res.id });
+            })
+        })
+    }
+
     renderNextSessionCards(students) {
         return students.map((student) => {
             return <Card title={`${student.name}'s next Tutoring Session`}>
@@ -126,7 +140,7 @@ class Home extends Component {
             return (<View>
                 <Image style={styles.image} source={{ uri: tutor.profileImg}} />
                 <Text style={styles.text}>{`Subjects: ${listOfSubjects}`}</Text>
-                <Button onPress={() => this.props.navigation.navigate('Messaging')}
+                <Button onPress={() => this.props.navigation.navigate('Messaging', { otherPersonId: this.state.tutorId, currentUserId: this.state.studentId})}
                         title={`Message ${tutor.name}`}
                         buttonStyle={styles.buttonStyle}
                 />

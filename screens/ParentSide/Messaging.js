@@ -1,58 +1,107 @@
 import React, { Component } from 'react';
 import { GiftedChat, Actions, CustomActions } from 'react-native-gifted-chat'; // 0.3.0
 import ImagePicker from 'react-native-image-picker'; // 0.26.7
-import {addMessage} from "../../FirebaseManager";
-import {getConversation, getMessage, addMessagetoMessages, createConvo, addToConvo} from "../../FirebaseManager";
+import {addMessage, getConversationFromKey, addMessage2} from "../../FirebaseManager";
+import {getConversation, getMessage, addMessagetoMessages, createConvo, addToConvo } from "../../FirebaseManager";
 
 class Messaging extends Component {
 
 
     state = {
         messages: [],
-        otherPerson: {},
-        currentUser: {},
-        conversation: [],
+        otherPersonId: {},
+        currentUserId: {},
+        //conversation: [],
         convoKey: '',
 
     };
 
     componentWillMount() {
-            this.setState({ otherPerson: this.props.navigation.state.params.otherPerson, currentUser: this.props.navigation.state.params.currentUser});
-            //otherPerson is just their name, convert to their
-            //pull messages from firebase here
-            //if (this.props.navigation.state.params.currentUser.haveConvo) {
-                getConversation(this.props.navigation.state.params.otherPerson, this.props.navigation.state.params.currentUser.name).then(res => {
-                    this.setState({conversation: res.messages, convoKey: res.key});
-                    var conversation = res.messages;
+            console.log("COMPONENT WILL MOUNT");
 
-                    //var messages = [];
-                    for (var message in conversation) {
-                        console.log("looking at id " + conversation[message]);
-                        getMessage(conversation[message]).then(res => {
-                            //console.log("RECEIVED MESSAGE!!!!!1" + JSON.stringify(res));
+            const { currentUserId, otherPersonId } = this.props.navigation.state.params;
+
+            this.setState({ currentUserId, otherPersonId });
+
+            var arr = [currentUserId, otherPersonId];
+            arr.sort();
+
+            var convoKey = arr[0] + arr[1];
+            this.setState({ convoKey });
+
+            console.log("CONVO KEY: " + convoKey);
+
+            getConversationFromKey(convoKey).then(res => {
+                if (res != null) {
+                    //load all the messages
+                    console.log(res);
+                    //if (!Array.isArray(res)) res = res.convoKey;
+                    console.log("LOADED: " + res + " is array: " + Array.isArray(res));
+                    for (var i = 0; i < res.length; i++) {
+                        console.log("loading the message with id" + res[i]);
+                        getMessage(res[i]).then(res => {
+                            console.log("GOT THE MESSAGE: " + res);
+
                             var text = res.message;
                             var createdAt = res.timestamp;
                             var _id = this.state.messages.length + 1;
                             var to = res.to;
-                            //var from = res.from;
                             var userId = -1;
                             var senderName = "";
-                            console.log("text: " + text);
-                            if (this.state.currentUser.name === to) {
+                            if (this.state.currentUserId=== to) {
                                 userId = 2;
-                                senderName = this.state.otherPerson;
+                                senderName = this.state.otherPersonId;
                             } //user received a message
                             else {
                                 userId = 1;
-                                senderName = this.state.currentUser.name;
+                                senderName = this.state.currentUserId;
                             }
 
                             this.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
-                        });
+                        })
                     }
-                });
+                }
+            })
 
-            //}
+
+
+
+
+            // this.setState({ otherPerson: this.props.navigation.state.params.otherPerson, currentUser: this.props.navigation.state.params.currentUser});
+            // //otherPerson is just their name, convert to their
+            // //pull messages from firebase here
+            // //if (this.props.navigation.state.params.currentUser.haveConvo) {
+            //     getConversation(this.props.navigation.state.params.otherPerson, this.props.navigation.state.params.currentUser.name).then(res => {
+            //         this.setState({conversation: res.messages, convoKey: res.key});
+            //         var conversation = res.messages;
+            //
+            //         //var messages = [];
+            //         for (var message in conversation) {
+            //             console.log("looking at id " + conversation[message]);
+            //             getMessage(conversation[message]).then(res => {
+            //                 var text = res.message;
+            //                 var createdAt = res.timestamp;
+            //                 var _id = this.state.messages.length + 1;
+            //                 var to = res.to;
+            //                 //var from = res.from;
+            //                 var userId = -1;
+            //                 var senderName = "";
+            //                 console.log("text: " + text);
+            //                 if (this.state.currentUser.name === to) {
+            //                     userId = 2;
+            //                     senderName = this.state.otherPerson;
+            //                 } //user received a message
+            //                 else {
+            //                     userId = 1;
+            //                     senderName = this.state.currentUser.name;
+            //                 }
+            //
+            //                 this.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
+            //             });
+            //         }
+            //     });
+            //
+            // //}
 
 
 /*
@@ -96,12 +145,23 @@ class Messaging extends Component {
     }
 
 
-    onSend(message = [], newMessage) {
+    onSend(message = [], addToDatabase) {
         console.log(message);
         //receiver, sender, convo key
         //add to messages list and append to conversation
-        if (newMessage) {
-            addMessage(message, this.state.convoKey, this.state.currentUser, this.state.otherPerson );
+        //if (newMessage) {
+
+
+            //addMessage(message, this.state.convoKey, this.state.currentUser, this.state.otherPerson );
+
+            if (Array.isArray(message)) message = message[0];
+
+
+            var from = message.user._id === 1 ? this.state.currentUserId : this.state.otherPersonId;
+            var to = message.user._id === 2 ? this.state.currentUserId : this.state.otherPersonId;
+
+            if (addToDatabase) addMessage2(this.state.convoKey, message, from, to);
+
             /*
             var messageId = '';
             addMessagetoMessages(message).then(res => {
@@ -127,7 +187,7 @@ class Messaging extends Component {
                 }
             });
             */
-        }
+        //}
 
 
         this.setState(previousState => ({

@@ -18,7 +18,7 @@ class SignUpStudent extends Component {
     };
 
     componentWillMount() {
-        if (this.props.navigation.state.params.parentName != null) {
+        if (this.props.navigation.state.params != null && this.props.navigation.state.params.parentName != null) {
             this.setState({parentName: this.props.navigation.state.params.parentName, newParent: false});
         }
     }
