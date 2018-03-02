@@ -3,6 +3,7 @@ import { GiftedChat, Actions, CustomActions } from 'react-native-gifted-chat'; /
 import ImagePicker from 'react-native-image-picker'; // 0.26.7
 import {addMessage, getConversationFromKey, addMessage2} from "../../FirebaseManager";
 import {getConversation, getMessage, addMessagetoMessages, createConvo, addToConvo } from "../../FirebaseManager";
+import firebase from 'firebase';
 
 class Messaging extends Component {
 
@@ -16,7 +17,13 @@ class Messaging extends Component {
 
     };
 
+
+
     componentWillMount() {
+
+
+
+
             console.log("COMPONENT WILL MOUNT");
 
             const { currentUserId, otherPersonId } = this.props.navigation.state.params;
@@ -31,37 +38,71 @@ class Messaging extends Component {
 
             console.log("CONVO KEY: " + convoKey);
 
-            getConversationFromKey(convoKey).then(res => {
-                if (res != null) {
-                    //load all the messages
-                    console.log(res);
+            var ref = this;
+
+            firebase.database().ref('conversations/' + convoKey).on('value', function(snapshot) {
+                if (snapshot.val() != null) {
+                    var res = snapshot.val();
                     //if (!Array.isArray(res)) res = res.convoKey;
-                    console.log("LOADED: " + res + " is array: " + Array.isArray(res));
                     for (var i = 0; i < res.length; i++) {
-                        console.log("loading the message with id" + res[i]);
                         getMessage(res[i]).then(res => {
-                            console.log("GOT THE MESSAGE: " + res);
 
                             var text = res.message;
                             var createdAt = res.timestamp;
-                            var _id = this.state.messages.length + 1;
+                            var _id = ref.state.messages.length + 1;
+
+
                             var to = res.to;
                             var userId = -1;
                             var senderName = "";
-                            if (this.state.currentUserId=== to) {
+
+
+                            if (ref.state.currentUserId=== to) {
                                 userId = 2;
-                                senderName = this.state.otherPersonId;
+                                senderName = ref.state.otherPersonId;
                             } //user received a message
                             else {
                                 userId = 1;
-                                senderName = this.state.currentUserId;
+                                senderName = ref.state.currentUserId;
                             }
 
-                            this.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
+                            ref.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
                         })
                     }
                 }
-            })
+            });
+
+            // getConversationFromKey(convoKey).then(res => {
+            //     if (res != null) {
+            //         //load all the messages
+            //         console.log(res);
+            //         //if (!Array.isArray(res)) res = res.convoKey;
+            //         console.log("LOADED: " + res + " is array: " + Array.isArray(res));
+            //         for (var i = 0; i < res.length; i++) {
+            //             console.log("loading the message with id" + res[i]);
+            //             getMessage(res[i]).then(res => {
+            //                 console.log("GOT THE MESSAGE: " + res);
+            //
+            //                 var text = res.message;
+            //                 var createdAt = res.timestamp;
+            //                 var _id = this.state.messages.length + 1;
+            //                 var to = res.to;
+            //                 var userId = -1;
+            //                 var senderName = "";
+            //                 if (this.state.currentUserId=== to) {
+            //                     userId = 2;
+            //                     senderName = this.state.otherPersonId;
+            //                 } //user received a message
+            //                 else {
+            //                     userId = 1;
+            //                     senderName = this.state.currentUserId;
+            //                 }
+            //
+            //                 this.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
+            //             })
+            //         }
+            //     }
+            // })
 
 
 
@@ -146,6 +187,7 @@ class Messaging extends Component {
 
 
     onSend(message = [], addToDatabase) {
+        console.log("called on send");
         console.log(message);
         //receiver, sender, convo key
         //add to messages list and append to conversation
@@ -155,6 +197,8 @@ class Messaging extends Component {
             //addMessage(message, this.state.convoKey, this.state.currentUser, this.state.otherPerson );
 
             if (Array.isArray(message)) message = message[0];
+
+            console.log(message);
 
 
             var from = message.user._id === 1 ? this.state.currentUserId : this.state.otherPersonId;
