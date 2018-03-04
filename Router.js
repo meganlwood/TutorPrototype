@@ -18,12 +18,12 @@ import WaitingTutor from "./screens/Authorization/WaitingTutor";
 
 const ParentHomeStack = StackNavigator({
     Home: { screen: ParentHome, navigationOptions: { title: "Home" } },
-    Messaging: { screen : Messaging, navigationOptions: { title: "Message Your Tutor" } },
+    Messaging: { screen : Messaging },
 });
 
 const TutorHomeStack = StackNavigator({
     Home: { screen: TutorHome, navigationOptions: { title: "Home" }},
-    Messaging: { screen: Messaging, navigationOptions: { title: "Message your student "}}
+    Messaging: { screen: Messaging }
 });
 
 const CalendarStack = StackNavigator({

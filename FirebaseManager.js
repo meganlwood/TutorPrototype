@@ -1,23 +1,23 @@
 import firebase from 'firebase';
 import { Tutor } from "./Objects";
 
-// const config = {
-//     apiKey: "AIzaSyBsjlF4FNxju6ise_-PRyyD2ZhPVwyoev4",
-//     authDomain: "itutoru-ef7e2.firebaseapp.com",
-//     databaseURL: "https://itutoru-ef7e2.firebaseio.com",
-//     projectId: "itutoru-ef7e2",
-//     storageBucket: "itutoru-ef7e2.appspot.com",
-//     messagingSenderId: "115499384435"
-// };
-
 const config = {
-    apiKey: "AIzaSyDIEOu99SaPq8TSdT_ep2EqrzhaDUFJ36Y",
-    authDomain: "itutoru-megan-refactor.firebaseapp.com",
-    databaseURL: "https://itutoru-megan-refactor.firebaseio.com",
-    projectId: "itutoru-megan-refactor",
-    storageBucket: "",
-    messagingSenderId: "842705651129"
+    apiKey: "AIzaSyBsjlF4FNxju6ise_-PRyyD2ZhPVwyoev4",
+    authDomain: "itutoru-ef7e2.firebaseapp.com",
+    databaseURL: "https://itutoru-ef7e2.firebaseio.com",
+    projectId: "itutoru-ef7e2",
+    storageBucket: "itutoru-ef7e2.appspot.com",
+    messagingSenderId: "115499384435"
 };
+
+// const config = {
+//     apiKey: "AIzaSyDIEOu99SaPq8TSdT_ep2EqrzhaDUFJ36Y",
+//     authDomain: "itutoru-megan-refactor.firebaseapp.com",
+//     databaseURL: "https://itutoru-megan-refactor.firebaseio.com",
+//     projectId: "itutoru-megan-refactor",
+//     storageBucket: "",
+//     messagingSenderId: "842705651129"
+// };
 
 var loading = true;
 
@@ -139,16 +139,16 @@ export function getMessage(messageID) {
 
 
 
-export function getUserInfo() {
-    return new Promise((resolve, reject) => {
-        firebase.database().ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
-//check if null to look in students maybe
-
-            resolve(Tutor(snapshot.val().email, '', snapshot.val().name, snapshot.val().phone));
-        })
-    });
-
-}
+// export function getUserInfo() {
+//     return new Promise((resolve, reject) => {
+//         firebase.database().ref('tutors/' + getLoggedInUser().uid).on('value', function(snapshot) {
+// //check if null to look in students maybe
+//
+//             resolve(Tutor(snapshot.val().email, '', snapshot.val().name, snapshot.val().phone));
+//         })
+//     });
+//
+// }
 
 export function addMessage2(convoKey, message, fromID, toID) {
     var messageRef = firebase.database().ref('messages/').push();
@@ -296,7 +296,7 @@ export function getTutor(uid) {
         firebase.database().ref('tutors/' + uid).on('value', function(snapshot) {
 //check if null to look in students maybe
 
-            resolve(snapshot);
+            resolve(snapshot.val());
         })
     });
 }

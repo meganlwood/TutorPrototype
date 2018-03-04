@@ -10,7 +10,7 @@ class CalendarScreen extends Component {
 
     DATA = {
         items: {
-            '2018-02-23': {
+            '2018-03-04': {
                 sessions: [
                     {
                         name: 'Bobby: Tutoring session with Casey',

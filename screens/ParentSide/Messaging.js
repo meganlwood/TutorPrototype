@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { GiftedChat, Actions, CustomActions } from 'react-native-gifted-chat'; // 0.3.0
 import ImagePicker from 'react-native-image-picker'; // 0.26.7
+import { PushNotificationIOS } from 'react-native';
 import {addMessage, getConversationFromKey, addMessage2} from "../../FirebaseManager";
 import {getConversation, getMessage, addMessagetoMessages, createConvo, addToConvo } from "../../FirebaseManager";
 import firebase from 'firebase';
@@ -12,28 +13,47 @@ class Messaging extends Component {
         messages: [],
         otherPersonId: {},
         currentUserId: {},
+        otherPersonName: '',
         //conversation: [],
         convoKey: '',
 
     };
+
+    static navigationOptions = ({ navigation }) => ({
+        title: `${navigation.state.params.otherPersonName}`,
+        // headerTitleStyle : {textAlign: 'center',alignSelf:'center'},
+        // headerStyle:{
+        //     backgroundColor:'white',
+        // },
+    });
 
 
 
     componentWillMount() {
 
 
-
+            // let localNotification = NotificationsIOS.localNotification({
+            //     alertBody: "Local notificiation!",
+            //     alertTitle: "Local Notification Title",
+            //     soundName: "chime.aiff",
+            //     silent: false,
+            //     category: "SOME_CATEGORY",
+            //     userInfo: { }
+            // });
 
             console.log("COMPONENT WILL MOUNT");
 
-            const { currentUserId, otherPersonId } = this.props.navigation.state.params;
+            const { currentUserId, otherPersonId, otherPersonName } = this.props.navigation.state.params;
 
-            this.setState({ currentUserId, otherPersonId });
+            this.setState({ currentUserId, otherPersonId, otherPersonName });
+            console.log("OTHER NAME: " + otherPersonName);
 
             var arr = [currentUserId, otherPersonId];
             arr.sort();
 
             var convoKey = arr[0] + arr[1];
+
+
             this.setState({ convoKey });
 
             console.log("CONVO KEY: " + convoKey);
@@ -43,32 +63,61 @@ class Messaging extends Component {
             firebase.database().ref('conversations/' + convoKey).on('value', function(snapshot) {
                 if (snapshot.val() != null) {
                     var res = snapshot.val();
+                    console.log("firebase updated and now res is: ");
+                    console.log(res);
                     //if (!Array.isArray(res)) res = res.convoKey;
-                    for (var i = 0; i < res.length; i++) {
-                        getMessage(res[i]).then(res => {
+                    if (ref.state.messages.length === 0) {
+                        for (var i = 0; i < res.length; i++) {
+                            getMessage(res[i]).then(res => {
 
-                            var text = res.message;
-                            var createdAt = res.timestamp;
+                                var text = res.message;
+                                var createdAt = res.timestamp;
+                                var _id = ref.state.messages.length + 1;
+
+
+                                var to = res.to;
+                                var userId = -1;
+                                var senderName = "";
+
+
+                                if (ref.state.currentUserId=== to) {
+                                    userId = 2;
+                                    senderName = ref.state.otherPersonName;
+                                } //user received a message
+                                else {
+                                    userId = 1;
+                                    senderName = ref.state.currentUserId;
+                                }
+
+                                ref.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
+                            })
+                        }
+                    }
+                    else {
+                        getMessage(res[res.length - 1]).then(mes => {
+                            var text = mes.message;
+                            var createdAt = mes.timestamp;
                             var _id = ref.state.messages.length + 1;
 
 
-                            var to = res.to;
+                            var to = mes.to;
                             var userId = -1;
                             var senderName = "";
 
 
                             if (ref.state.currentUserId=== to) {
                                 userId = 2;
-                                senderName = ref.state.otherPersonId;
+                                senderName = ref.state.otherPersonName;
                             } //user received a message
                             else {
                                 userId = 1;
                                 senderName = ref.state.currentUserId;
                             }
 
-                            ref.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
+                            if (to == ref.state.currentUserId) ref.onSend({_id: _id, text: text, createdAt: createdAt, user: {_id: userId, name: senderName}}, false);
                         })
                     }
+
                 }
             });
 

@@ -101,8 +101,9 @@ class TutorHome extends Component {
 
             return <Card title={`Your student: ${student.data.studentName}`}>
                 <Button
+                    buttonStyle={styles.buttonStyle}
                     title={`Message ${student.data.studentName}`}
-                    onPress={() => this.props.navigation.navigate('Messaging', { otherPersonId: student.id, currentUserId: this.state.currentUserId} )}
+                    onPress={() => this.props.navigation.navigate('Messaging', { title: student.data.studentName, otherPersonId: student.id, currentUserId: this.state.currentUserId, otherPersonName: student.data.studentName} )}
                 />
 
             </Card>
@@ -121,5 +122,14 @@ class TutorHome extends Component {
         );
     }
 }
+
+const styles = {
+    buttonStyle: {
+        marginTop: 20,
+        backgroundColor: '#0093ff',
+        borderRadius: 30,
+    },
+}
+
 
 export default TutorHome;

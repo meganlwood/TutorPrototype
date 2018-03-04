@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Messaging from './../TutorSide/Messaging';
 // import LoginScreen from './screens/LoginScreenOld';
 import LoginScreen from '../Authorization/LoginScreen'
-import {getLoggedInUserPromise, getParent, getStudent} from "../../FirebaseManager";
+import {getLoggedInUserPromise, getParent, getStudent, getTutor} from "../../FirebaseManager";
 // import CreateAccountTutor from "./screens/CreateAccountTutor";
 
 DATA = {
@@ -72,6 +72,8 @@ class Home extends Component {
         parentName: "Mom Smith",
         tutorId: '',
         studentId: '',
+        studentName: '',
+        tutorName: ''
     }
 /*
     componentWillMount() {
@@ -100,6 +102,12 @@ class Home extends Component {
                 console.log("LOADED THE STUDENT");
                 console.log(res);
                 this.setState({ tutorId: res.data.tutor, studentId: res.id });
+                getTutor(res.data.tutor).then(res => {
+                    console.log("TUTOR INFO");
+                    console.log(res);
+                    this.setState({ tutorName: res.name });
+                })
+
             })
         })
     }
@@ -140,7 +148,7 @@ class Home extends Component {
             return (<View>
                 <Image style={styles.image} source={{ uri: tutor.profileImg}} />
                 <Text style={styles.text}>{`Subjects: ${listOfSubjects}`}</Text>
-                <Button onPress={() => this.props.navigation.navigate('Messaging', { otherPersonId: this.state.tutorId, currentUserId: this.state.studentId})}
+                <Button onPress={() => this.props.navigation.navigate('Messaging', { otherPersonId: this.state.tutorId, currentUserId: this.state.studentId, otherPersonName: this.state.tutorName})}
                         title={`Message ${tutor.name}`}
                         buttonStyle={styles.buttonStyle}
                 />
