@@ -25,6 +25,31 @@ export function getLoggedInUser() {
     return firebase.auth().currentUser;
 }
 
+export function signOut() {
+    return new Promise((resolve, reject) => {
+        firebase.auth().signOut().then(resolve(true));
+    })
+}
+
+export function userType(uid) {
+    return new Promise((resolve, reject) => {
+        var ref = firebase.database().ref('tutors');
+        ref.once("value").then(snapshot => {
+            console.log("came back from the ref");
+            if (snapshot.child(uid + "").exists()) {
+                console.log("child exists");
+                resolve('tutor');
+                ref.off();
+                //Router = createRootNavigator(true, true);
+            }
+            else {
+                resolve('parent');
+                //Router = createRootNavigator(true, false);
+            }
+        });
+    })
+}
+
 export function getLoggedInUserPromise() {
     return new Promise((resolve, reject) => {
         firebase.auth().onAuthStateChanged(function(user) {
@@ -453,10 +478,10 @@ export function createUser(email, password) {
     });
 }
 
-export function signOut() {
-    firebase.auth().signOut().then(function () {
-        console.log('Signed Out');
-    }, function (error) {
-        console.error('Sign Out Error', error);
-    });
-}
+// export function signOut() {
+//     firebase.auth().signOut().then(function () {
+//         console.log('Signed Out');
+//     }, function (error) {
+//         console.error('Sign Out Error', error);
+//     });
+// }

@@ -3,7 +3,7 @@ import { View, Text, Button as RNButton, StyleSheet, Image, KeyboardAvoidingView
 import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements'
 import SimpleFormComponent from "../../components/SimpleFormComponent";
 import firebase from 'firebase';
-import {signIn} from "../../FirebaseManager";
+import {getLoggedInUserPromise, signIn, userType} from "../../FirebaseManager";
 
 class LoginScreen extends Component {
 
@@ -36,7 +36,17 @@ class LoginScreen extends Component {
 
         signIn(this.state.email, this.state.password).then(res => {
             if (res === true) {
-                this.props.navigation.navigate('SignedIn');
+                getLoggedInUserPromise().then(user => {
+                    userType(user.uid).then(type => {
+                        if (type === 'tutor') {
+                            this.props.navigation.navigate('SignedInTutor');
+                        }
+                        else {
+                            this.props.navigation.navigate('SignedInParent');
+                        }
+                    })
+                })
+
             }
             else {
                 this.state.errors.password = res;

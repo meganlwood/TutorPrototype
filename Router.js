@@ -14,6 +14,7 @@ import TutorHome from './screens/TutorSide/Home';
 import SignUpTutor from "./screens/Authorization/SignUpTutor";
 import WaitingStudent from "./screens/Authorization/WaitingStudent";
 import WaitingTutor from "./screens/Authorization/WaitingTutor";
+import {Tutor} from "./Objects";
 
 
 const ParentHomeStack = StackNavigator({
@@ -130,7 +131,7 @@ const ParentApp = TabNavigator(
             }
         },
         Settings: {
-            screen: WaitingStudent,
+            screen: SettingsStack,
             navigationOptions: {
                 tabBarLabel: "Settings",
                 tabBarIcon: ({ tintColor }) => {
@@ -146,36 +147,43 @@ const ParentApp = TabNavigator(
         }
     }
 );
+//
+// const renderSignedInPage = (tutor) => {
+//     if (tutor) {
+//         if (waiting) {
+//             return WaitingTutor;
+//         }
+//         else return TutorApp;
+//     }
+//     else {
+//         if (waiting) {
+//             return WaitingStudent;
+//         }
+//         else return ParentApp;
+//     }
+//
+// }
 
-const renderSignedInPage = (tutor, waiting) => {
-    if (tutor) {
-        if (waiting) {
-            return WaitingTutor;
-        }
-        else return TutorApp;
-    }
-    else {
-        if (waiting) {
-            return WaitingStudent;
-        }
-        else return ParentApp;
-    }
-
-}
-
-export const createRootNavigator = (signedIn, tutor, waiting) => {
+export const createRootNavigator = (signedIn, tutor) => {
     return StackNavigator(
         {
             SignedOut: {
                 screen: AuthStack,
             },
-            SignedIn: {
-                screen: renderSignedInPage(tutor, waiting),
+            // SignedIn: {
+            //     screen: renderSignedInPage(tutor),
+            // },
+            SignedInParent: {
+                screen: ParentApp,
+            },
+            SignedInTutor: {
+                screen: TutorApp,
             }
+
         },
         {
             headerMode: 'none',
-            initialRouteName: signedIn? "SignedIn" : "SignedOut",
+            initialRouteName: !signedIn? "SignedOut" : tutor? "SignedInTutor" : "SignedInParent",
         },
     );
 }

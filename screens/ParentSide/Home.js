@@ -189,9 +189,9 @@ class Home extends Component {
 
                 {this.renderNextSessionCards(students)}
                 {this.renderTutorCards(students, tutors)}
-                <Button onPress={() => this.props.navigation.navigate('SignUpStudent', {parentName: this.state.parentName})}
-                        title={`Add New Student`}
-                        buttonStyle={styles.buttonStyle}/>
+                {/*<Button onPress={() => this.props.navigation.navigate('SignUpStudent', {parentName: this.state.parentName})}*/}
+                        {/*title={`Add New Student`}*/}
+                        {/*buttonStyle={styles.buttonStyle}/>*/}
 
             </ScrollView>
 
