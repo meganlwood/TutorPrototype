@@ -179,6 +179,16 @@ class Home extends Component {
         })
     }
 
+    renderChatCard() {
+      return (
+        <Card title={'Need help?'} >
+          <Button title={'Chat with Support'} onPress={() => {
+            // TODO go to chat support
+          }} buttonStyle={styles.buttonStyle} />
+        </Card>
+      )
+    }
+
     render() {
 
         const { students, tutors } = this.state.data;
@@ -192,6 +202,7 @@ class Home extends Component {
                 {/*<Button onPress={() => this.props.navigation.navigate('SignUpStudent', {parentName: this.state.parentName})}*/}
                         {/*title={`Add New Student`}*/}
                         {/*buttonStyle={styles.buttonStyle}/>*/}
+                {this.renderChatCard()}
 
             </ScrollView>
 
