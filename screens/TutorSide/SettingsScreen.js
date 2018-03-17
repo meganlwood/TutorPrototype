@@ -20,6 +20,20 @@ class SettingsScreen extends React.Component {
             <View style={styles.container}>
                 {/*<Image source={ require("../../images/253pgj.jpg") } style={{ width: '100%', height: '100%'}} />*/}
                 <Button
+                  title={"Approve Timesheet"}
+                  onPress={() => {
+                      // TODO approve timesheet in the database
+                  }}
+                  style={styles.button} />
+
+                <Button
+                  title={"Tutor New Students"}
+                  onPress={() => {
+                    this.props.navigation.navigate('SelectStudent')
+                  }}
+                  style={styles.button} />
+
+                <Button
                     title={"Sign Out"}
                     onPress={() => signOut().then(res => this.props.navigation.navigate('SignedOut'))}
                     style={styles.button}

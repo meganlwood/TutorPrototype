@@ -14,6 +14,8 @@ import TutorHome from './screens/TutorSide/Home';
 import SignUpTutor from "./screens/Authorization/SignUpTutor";
 import WaitingStudent from "./screens/Authorization/WaitingStudent";
 import WaitingTutor from "./screens/Authorization/WaitingTutor";
+import SelectStudent from './screens/TutorSide/SelectStudent';
+import TutorSettings from './screens/TutorSide/SettingsScreen';
 import {Tutor} from "./Objects";
 
 
@@ -38,6 +40,12 @@ const LearningPlanStack = StackNavigator({
 const SettingsStack = StackNavigator({
     Settings: { screen: SettingsScreen, navigationOptions: { title: "Settings" }}
 });
+
+const TutorSettingsStack = StackNavigator({
+    Settings: { screen: TutorSettings, navigationOptions: { title: "Settings" }},
+    SelectStudent: {screen: SelectStudent}
+});
+
 const AuthStack = StackNavigator(
     {
         Login: { screen: LoginScreen },
@@ -83,7 +91,7 @@ const TutorApp = TabNavigator(
             }
         },
         Settings: {
-            screen: SettingsStack,
+            screen: TutorSettingsStack,
             navigationOptions: {
                 tabBarLabel: "Settings",
                 tabBarIcon: ({ tintColor }) => {

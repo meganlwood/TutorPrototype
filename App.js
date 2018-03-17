@@ -36,7 +36,7 @@ class App extends Component {
     state={
         loading: true,
         signedIn: false,
-        tutor: false,
+        tutor: true,
     }
 
     componentWillMount() {
