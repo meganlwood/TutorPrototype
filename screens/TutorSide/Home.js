@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native'
+import { View, ScrollView, Text, RefreshControl } from 'react-native'
 import { Button, Card } from 'react-native-elements';
 import {
     getLoggedInUser, getLoggedInUserPromise, getStudent, getStudentsForTutor,
@@ -8,77 +8,44 @@ import {
 
 
 class TutorHome extends Component {
+    constructor(props) {
+      super(props);
+      this.handleReRender = this.handleReRender.bind(this);
 
-    state={
-        students: {},
-        currentUserId: {}
+      this.state={
+          students: {},
+          currentUserId: {},
+          refreshing: false
+      }
+    }
+
+    handleReRender() {
+      this.setState({refreshing: true});
+      getLoggedInUserPromise().then(user => {
+          var userId = user.uid;
+          this.setState({currentUserId: userId});
+          getStudentsForTutor(userId).then(res => {
+              if (Array.isArray(res)) {
+                  var studentsArr = [];
+                  for (var i = 0; i < res.length; i++) {
+                      getStudent(res[i]).then(res => {
+                          studentsArr.push(res);
+                          this.setState({ students: studentsArr, refreshing: false });
+                      });
+                  }
+              }
+              else {
+                  this.setState({ students: [res], refreshing: false});
+              }
+          });
+      });
     }
 
     componentWillMount() {
-        //call firebase here and setState with the firebase data
-        //console.log("LOGGED IN USER: " + getLoggedInUser());
-        // getLoggedInUserPromise().then(user => {
-        //     var userID = user.uid;
-        //     getTutor(userID).then(res => {
-        //         console.log(JSON.stringify(res));
-        //         var json = JSON.parse(JSON.stringify(res));
-        //
-        //         this.setState({data: json})
-        //
-        //     });
-        //     }
-        // );
-
-        getLoggedInUserPromise().then(user => {
-            var userId = user.uid;
-            this.setState({currentUserId: userId});
-            getStudentsForTutor(userId).then(res => {
-                if (Array.isArray(res)) {
-                    var studentsArr = [];
-                    for (var i = 0; i < res.length; i++) {
-                        getStudent(res[i]).then(res => {
-                            studentsArr.push(res);
-                            this.setState({ students: studentsArr });
-                        });
-                    }
-                }
-                else {
-                    this.setState({ students: [res]});
-                }
-
-
-
-            });
-        })
-
-
-
-
-
+      this.handleReRender();
     }
 
     renderCards(students) {
-        // var studentArr = [];
-        // for (var item in students) {
-        //     //console.log("ITEM: " + item + ", " + students[item]);
-        //     //pass in {students[item], all student info} - from database
-        //     studentArr.push(students[item]);
-        // }
-
-        // console.log("CURRENT USER: " + JSON.stringify(this.state.data));
-        //
-        // return studentArr.map((student) => {
-        //     return <Card title={`Your student: ${student}`}>
-        //         <Button
-        //             title={`Message ${student}`}
-        //             onPress={() => this.props.navigation.navigate('Messaging', { otherPerson: student, currentUser: this.state.data} )}
-        //         >
-        //
-        //
-        //         </Button>
-        //
-        //     </Card>
-        // })
 
         if (!Array.isArray(students)) {
           return null;
@@ -90,7 +57,7 @@ class TutorHome extends Component {
               <Button
                   buttonStyle={styles.buttonStyle}
                   title={'Select a Student'}
-                  onPress={() => this.props.navigation.navigate('SelectStudent')}
+                  onPress={() => this.props.navigation.navigate('SelectStudent', { onNavigateBack: this.handleReRender })}
               />
 
           </Card>
@@ -110,13 +77,20 @@ class TutorHome extends Component {
 
 
     render() {
+        // this.handleReRender();
         return(
-            <View>
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.handleReRender}
+                />
+              }>
 
                 {this.renderCards(this.state.students)}
 
 
-            </View>
+            </ScrollView>
         );
     }
 }

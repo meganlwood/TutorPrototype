@@ -11,6 +11,7 @@ class SelectStudent extends Component {
 
     state={
         students: {},
+        currentStudents: {},
         currentUserId: {}
     }
 
@@ -24,6 +25,21 @@ class SelectStudent extends Component {
                   return student;
                 });
                 this.setState({students: s});
+            });
+        }).then(user => {
+            getStudentsForTutor(userId).then(res => {
+                if (Array.isArray(res)) {
+                    var studentsArr = [];
+                    for (var i = 0; i < res.length; i++) {
+                        getStudent(res[i]).then(res => {
+                            studentsArr.push(res);
+                            this.setState({ currentStudents: studentsArr });
+                        });
+                    }
+                }
+                else {
+                    this.setState({ currentStudents: [res]});
+                }
             });
         });
     }
@@ -44,7 +60,14 @@ class SelectStudent extends Component {
                     buttonStyle={styles.buttonStyle}
                     title={`Tutor Student`}
                     onPress={() =>  {
-                      connectStudentTutor(student.key, this.state.currentUserId)
+                      console.log("students: " + JSON.stringify(this.state.currentStudents));
+                      
+                      var arr = Array.from(this.state.currentStudents);
+                      arr.push(student.key);
+
+                      connectStudentTutor(student.key, this.state.currentUserId, arr);
+                      this.props.navigation.state.params.onNavigateBack(this);
+                      this.props.navigation.goBack();
                     }}
                 />
 

@@ -492,21 +492,18 @@ export function createUser(email, password) {
     });
 }
 
-export function connectStudentTutor(student_id, tutor_id) {
+export function connectStudentTutor(student_id, tutor_id, currentStudents) {
   return new Promise((resolve, reject) => {
-    console.log("CONNECTING STUDENT TO TUTOR");
-    var currentStudents = [];
-    firebase.database().ref('tutors/' + tutor_id).once('value', function(snapshot) {
-        if (snapshot.child('students').exists()) {
-          if (Array.isArray(snapshot.child('students'))) {
-            currentStudents = snapshot.child('students');
-          } else {
-            currentStudents = [ snapshot.child('students')];
-          }
-        }
-    });
-
-    currentStudents.push(student_id);
+    // var currentStudents = [];
+    // firebase.database().ref('tutors/' + tutor_id).once('value', function(snapshot) {
+    //     if (snapshot.child('students').exists()) {
+    //       currentStudents = snapshot.child('students');
+    //     }
+    // });
+    // currentStudents = Array.from(currentStudents);
+    // console.log("current students: " + JSON.stringify(currentStudents));
+    // currentStudents.push(student_id);
+    // console.log("pushing " + student_id + " to tutor " + tutor_id);
 
     firebase.database().ref('tutors/' + tutor_id).update({
         frozen: false, // "frozen" is true if they haven't been matched with a student yet

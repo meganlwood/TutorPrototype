@@ -29,7 +29,7 @@ class SettingsScreen extends React.Component {
                 <Button
                   title={"Tutor New Students"}
                   onPress={() => {
-                    this.props.navigation.navigate('SelectStudent')
+                    this.props.navigation.navigate('SelectStudent', { onNavigateBack : this.componentDidMount })
                   }}
                   style={styles.button} />
 
