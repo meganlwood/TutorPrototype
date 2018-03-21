@@ -27,7 +27,8 @@ class SignUpStudent extends Component {
         this.state.frozen = true;
         addStudentInfo(this.state.studentName, this.state.parentName, this.state.phone, this.state.subject, this.state.grade, this.state.city, this.state.newParent); //automatically frozen
         //now should navigate to waiting screen
-        this.props.navigation.navigate("WaitingStudent");
+        // this.props.navigation.navigate("WaitingStudent");
+        this.props.navigation.navigate("Home");
     }
 
     onPressNewStudent() {

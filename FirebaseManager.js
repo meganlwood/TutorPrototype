@@ -314,8 +314,22 @@ export function updateMessages(arr, id, convoKey) {
        resolve(arr);
     });
 }
-
 */
+
+export function getStudentsWithoutTutor() {
+  return new Promise((resolve, reject) => {
+      firebase.database().ref('students').orderByChild('tutor').equalTo(null).once('value', function(snapshot) {
+        var returnVal = [];
+        snapshot.forEach(function(childSnap) {
+          var item = childSnap.val();
+          item.key = childSnap.key;
+          returnVal.push(item);
+        })
+        resolve(returnVal);
+      })
+  });
+}
+
 export function getTutor(uid) {
     return new Promise((resolve, reject) => {
         firebase.database().ref('tutors/' + uid).on('value', function(snapshot) {

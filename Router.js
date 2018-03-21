@@ -26,7 +26,8 @@ const ParentHomeStack = StackNavigator({
 
 const TutorHomeStack = StackNavigator({
     Home: { screen: TutorHome, navigationOptions: { title: "Home" }},
-    Messaging: { screen: Messaging }
+    Messaging: { screen: Messaging },
+    SelectStudent: { screen: SelectStudent }
 });
 
 const CalendarStack = StackNavigator({

@@ -218,7 +218,7 @@ const styles = {
         borderRadius: 30,
     },
     cardStyle: {
-        borderColor: '#f5f924'
+        borderColor: '#f5f924',
     },
     cardFlexRow: {
         flexDirection: 'row',

@@ -19,7 +19,8 @@ class SignUpTutor extends Component {
     onPressSignUp() {
         this.state.frozen = true;
         addTutorInfo(this.state.name, this.state.phone, this.state.subjects, this.state.exp, this.state.degree, this.state.city);
-        this.props.navigation.navigate("WaitingTutor");
+        this.props.navigation.navigate("Home");
+        // this.props.navigation.navigate("WaitingTutor");
         //addStudentInfo(this.state.name, this.state.phone, this.state.subject, this.state.grade, this.state.city); //automatically frozen
         //now should navigate to waiting screen
         //this.props.navigation.navigate("WaitingStudent");

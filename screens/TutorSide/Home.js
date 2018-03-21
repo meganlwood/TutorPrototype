@@ -9,18 +9,6 @@ import {
 
 class TutorHome extends Component {
 
-    // DATA = {
-    //     //I just did names for now, feel free to add other things you'll need. I passed the param also
-    //     students: [
-    //         {
-    //             name: "Courtney Wood",
-    //         },
-    //         {
-    //             name: "Megan Wood"
-    //         }
-    //     ]
-    // }
-
     state={
         students: {},
         currentUserId: {}
@@ -93,12 +81,22 @@ class TutorHome extends Component {
         // })
 
         if (!Array.isArray(students)) {
-            return null;
+          return null;
         }
 
+        // FOR EMPTY STATE FOR TUTOR
+        if (students.length === 0 || students[0].data === null) {
+          return <Card title={'No Students Yet'}>
+              <Button
+                  buttonStyle={styles.buttonStyle}
+                  title={'Select a Student'}
+                  onPress={() => this.props.navigation.navigate('SelectStudent')}
+              />
+
+          </Card>
+        }
 
         return students.map((student) => {
-
             return <Card title={`Your student: ${student.data.studentName}`}>
                 <Button
                     buttonStyle={styles.buttonStyle}

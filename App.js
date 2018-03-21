@@ -8,7 +8,6 @@ import LearningPlan from './screens/TutorSide/LearningPlan';
 import CalendarScreen from './screens/ParentSide/CalendarScreen';
 import Messaging from './screens/ParentSide/Messaging';
 import firebase from 'firebase';
-// import LoginScreen from './screens/LoginScreenOld';
 import LoginScreen from './screens/Authorization/LoginScreen'
 import Router, { createRootNavigator } from './Router';
 import {getLoggedInUserPromise, initialize, userType} from "./FirebaseManager";
