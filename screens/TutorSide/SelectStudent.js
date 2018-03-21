@@ -3,7 +3,7 @@ import { View, Text, ScrollView } from 'react-native'
 import { Button, Card } from 'react-native-elements';
 import {
     getLoggedInUser, getLoggedInUserPromise, getStudent,
-    getTutor, getStudentsWithoutTutor
+    getTutor, getStudentsWithoutTutor, connectStudentTutor
 } from "../../FirebaseManager";
 
 
@@ -38,13 +38,13 @@ class SelectStudent extends Component {
               <Text >Grade: {student.grade}</Text>
               <Text >Subject: {student.subject}</Text>
               <Text >City: {student.city}</Text>
-              <Text >Availability: N/A</Text> // TODO add availability
+              <Text >Availability: N/A</Text>
 
                 <Button
                     buttonStyle={styles.buttonStyle}
                     title={`Tutor Student`}
                     onPress={() =>  {
-                      // TODO match student to tutor
+                      connectStudentTutor(student.key, this.state.currentUserId)
                     }}
                 />
 

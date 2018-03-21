@@ -492,6 +492,36 @@ export function createUser(email, password) {
     });
 }
 
+export function connectStudentTutor(student_id, tutor_id) {
+  return new Promise((resolve, reject) => {
+    console.log("CONNECTING STUDENT TO TUTOR");
+    var currentStudents = [];
+    firebase.database().ref('tutors/' + tutor_id).once('value', function(snapshot) {
+        if (snapshot.child('students').exists()) {
+          if (Array.isArray(snapshot.child('students'))) {
+            currentStudents = snapshot.child('students');
+          } else {
+            currentStudents = [ snapshot.child('students')];
+          }
+        }
+    });
+
+    currentStudents.push(student_id);
+
+    firebase.database().ref('tutors/' + tutor_id).update({
+        frozen: false, // "frozen" is true if they haven't been matched with a student yet
+        students: currentStudents
+    });
+
+    firebase.database().ref('students/' + student_id).update({
+        frozen: false, // "frozen" is true if they haven't been matched with a tutor yet
+        tutor: tutor_id
+    });
+
+    resolve(true);
+  })
+}
+
 // export function signOut() {
 //     firebase.auth().signOut().then(function () {
 //         console.log('Signed Out');
