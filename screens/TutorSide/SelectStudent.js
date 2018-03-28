@@ -72,6 +72,9 @@ class SelectStudent extends Component {
                     onPress={() =>  {
 
                       var arr = this.state.currentStudents[0];
+                      if (typeof arr == "undefined") {
+                        arr = [];
+                      }
                       arr.push(student.key);
 
                       connectStudentTutor(student.key, this.state.currentUserId, arr);
