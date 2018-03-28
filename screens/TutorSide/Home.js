@@ -25,7 +25,8 @@ class TutorHome extends Component {
           var userId = user.uid;
           this.setState({currentUserId: userId});
           getStudentsForTutor(userId).then(res => {
-              if (Array.isArray(res)) {
+            console.log("RES IS: " + JSON.stringify(res));
+              if (res !== "NULL" && res[0] !== "NULL") {
                   var studentsArr = [];
                   for (var i = 0; i < res.length; i++) {
                       getStudent(res[i]).then(res => {
@@ -35,7 +36,8 @@ class TutorHome extends Component {
                   }
               }
               else {
-                  this.setState({ students: [res], refreshing: false});
+                  console.log("res is null, starting with empty students");
+                  this.setState({ students: [], refreshing: false});
               }
           });
       });
@@ -50,9 +52,9 @@ class TutorHome extends Component {
         if (!Array.isArray(students)) {
           return null;
         }
-
+        console.log("STUDENTS: " + JSON.stringify(this.state.students))
         // FOR EMPTY STATE FOR TUTOR
-        if (students.length === 0 || students[0].data === null) {
+        if (students.length === 0) {
           return <Card title={'No Students Yet'}>
               <Button
                   buttonStyle={styles.buttonStyle}
@@ -63,8 +65,8 @@ class TutorHome extends Component {
           </Card>
         }
 
-        return students.map((student) => {
-            return <Card title={`Your student: ${student.data.studentName}`}>
+        return students.map((student, i) => {
+            return <Card title={`Your student: ${student.data.studentName}`} key={i}>
                 <Button
                     buttonStyle={styles.buttonStyle}
                     title={`Message ${student.data.studentName}`}

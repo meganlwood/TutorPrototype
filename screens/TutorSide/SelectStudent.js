@@ -3,7 +3,8 @@ import { View, Text, ScrollView } from 'react-native'
 import { Button, Card } from 'react-native-elements';
 import {
     getLoggedInUser, getLoggedInUserPromise, getStudent,
-    getTutor, getStudentsWithoutTutor, connectStudentTutor
+    getTutor, getStudentsWithoutTutor, connectStudentTutor,
+    getStudentsForTutor
 } from "../../FirebaseManager";
 
 
@@ -19,6 +20,22 @@ class SelectStudent extends Component {
         getLoggedInUserPromise().then(user => {
             var userId = user.uid;
             this.setState({currentUserId: userId});
+            getStudentsForTutor(userId).then(res => {
+                if (res !== "NULL" && res[0] !== "NULL") {
+                    var studentsArr = [];
+                    for (var i = 0; i < res.length; i++) {
+                        getStudent(res[i]).then(res => {
+                            studentsArr.push(res.id);
+                            this.setState({ currentStudents: studentsArr });
+                        });
+                    }
+                }
+                else {
+                    this.setState({ currentStudents: []});
+                }
+                console.log("beginning: " + JSON.stringify(this.state.currentStudents));
+            });
+        }).then(user => {
             getStudentsWithoutTutor().then(res => {
                 res = Array.from(res);
                 var s = res.map(function(student, index) {
@@ -26,28 +43,20 @@ class SelectStudent extends Component {
                 });
                 this.setState({students: s});
             });
-        }).then(user => {
-            getStudentsForTutor(userId).then(res => {
-                if (Array.isArray(res)) {
-                    var studentsArr = [];
-                    for (var i = 0; i < res.length; i++) {
-                        getStudent(res[i]).then(res => {
-                            studentsArr.push(res);
-                            this.setState({ currentStudents: studentsArr });
-                        });
-                    }
-                }
-                else {
-                    this.setState({ currentStudents: [res]});
-                }
-            });
         });
     }
+
+    // addStudent(student_id) {
+    //
+    //   var arr = Array.from(this.state.currentStudents);
+    //   arr.push(student_id);
+    // }
 
     renderCards(students) {
         if (!Array.isArray(students)) {
             return null;
         }
+
 
         return students.map((student, i) => {
             return <Card title={`Student`} key={i}>
@@ -56,13 +65,13 @@ class SelectStudent extends Component {
               <Text >City: {student.city}</Text>
               <Text >Availability: N/A</Text>
 
+
                 <Button
                     buttonStyle={styles.buttonStyle}
                     title={`Tutor Student`}
                     onPress={() =>  {
-                      console.log("students: " + JSON.stringify(this.state.currentStudents));
-                      
-                      var arr = Array.from(this.state.currentStudents);
+
+                      var arr = this.state.currentStudents[0];
                       arr.push(student.key);
 
                       connectStudentTutor(student.key, this.state.currentUserId, arr);
