@@ -71,7 +71,7 @@ class SelectStudent extends Component {
                     title={`Tutor Student`}
                     onPress={() =>  {
 
-                      var arr = this.state.currentStudents[0];
+                      var arr = this.state.currentStudents;
                       if (typeof arr == "undefined") {
                         arr = [];
                       }

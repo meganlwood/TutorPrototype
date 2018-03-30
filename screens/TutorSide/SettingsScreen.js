@@ -7,7 +7,8 @@ import {getLoggedInUser, getUserInfo, signOut} from "../../FirebaseManager";
 class SettingsScreen extends React.Component {
 
     state={
-        tutor: {}
+        tutor: {},
+        frozen: false
     }
 
     componentDidMount() {
@@ -16,9 +17,11 @@ class SettingsScreen extends React.Component {
     }
 
     render() {
+
+      if (this.state.frozen === false) {
         return (
             <View style={styles.container}>
-                {/*<Image source={ require("../../images/253pgj.jpg") } style={{ width: '100%', height: '100%'}} />*/}
+
                 <Button
                   title={"Approve Timesheet"}
                   onPress={() => {
@@ -41,6 +44,16 @@ class SettingsScreen extends React.Component {
             </View>
 
         );
+      } else {
+        return(
+          <View>
+            <Button
+                title={"Sign Out"}
+                onPress={() => signOut().then(res => this.props.navigation.navigate('SignedOut'))}
+                style={styles.button}
+            />
+          </View>);
+      }
     }
 
 }

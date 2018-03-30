@@ -92,7 +92,7 @@ class CreateAccount extends Component {
                 />
 
 
-                <View style={{ height: 40, opacity: this.state.loading? 1 : 0, paddingBotton: 20 }}>
+                <View style={{ height: 40, opacity: this.state.loading? 1 : 0, paddingBottom: 20 }}>
 
                 <DotIndicator
                     animating={this.state.loading}

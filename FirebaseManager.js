@@ -344,7 +344,7 @@ export function getStudentsForTutor(tutorUID) {
     return new Promise((resolve, reject) => {
         firebase.database().ref('tutors/' + tutorUID).on('value', function(snapshot) {
             console.log("students for tutor are: " + JSON.stringify(snapshot.val().students));
-            resolve([snapshot.val().students]);
+            resolve(snapshot.val().students);
         })
     });
 }
@@ -448,7 +448,7 @@ export function addTutorInfo(name, phone, subjects, exp, degree, city) {
         exp: exp,
         degree: degree,
         frozen: true, // "frozen" is true if they haven't been matched with a student yet
-        students: []
+        students: "NULL"
     });
 }
 

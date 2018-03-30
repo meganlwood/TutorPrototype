@@ -15,7 +15,8 @@ class TutorHome extends Component {
       this.state={
           students: {},
           currentUserId: {},
-          refreshing: false
+          refreshing: false,
+          frozen: false,
       }
     }
 
@@ -25,7 +26,9 @@ class TutorHome extends Component {
           var userId = user.uid;
           this.setState({currentUserId: userId});
           getStudentsForTutor(userId).then(res => {
+            console.log("res is: " + JSON.stringify(res))
               if (res !== "NULL" && res[0] !== "NULL") {
+                res = Array.from(res);
                   var studentsArr = [];
                   for (var i = 0; i < res.length; i++) {
                       getStudent(res[i]).then(res => {
@@ -64,6 +67,7 @@ class TutorHome extends Component {
         }
 
         return students.map((student, i) => {
+          console.log("student: " + JSON.stringify(student));
             return <Card title={`Your student: ${student.data.studentName}`} key={i}>
                 <Button
                     buttonStyle={styles.buttonStyle}
@@ -77,7 +81,12 @@ class TutorHome extends Component {
 
 
     render() {
-        // this.handleReRender();
+      if (this.state.frozen === true) {
+        return (<View style={styles.emptyStyle}>
+          <Text style={{fontStyle: 'italic', textAlign: 'center'}}>Once you are approved by our team, you will be able to choose students to tutor and see their info here!</Text>
+          </View>)
+      }
+
         return(
             <ScrollView
               refreshControl={
@@ -101,6 +110,12 @@ const styles = {
         backgroundColor: '#0093ff',
         borderRadius: 30,
     },
+    emptyStyle: {
+      marginLeft: '10%',
+      marginRight: '10%',
+      justifyContent: 'center',
+      marginTop: '50%',
+    }
 }
 
 
